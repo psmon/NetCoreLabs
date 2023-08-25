@@ -13,7 +13,7 @@ namespace ActorLibTest
     {
         AkkaService akkaService;
 
-        public readonly ITestOutputHelper output;
+        private readonly ITestOutputHelper output;
 
         public AkkaServiceTest(ITestOutputHelper output) : base(GetConfig())
         {
@@ -31,13 +31,15 @@ namespace ActorLibTest
             ");
         }
 
-        [Theory(DisplayName = "액터시스템을 생성후 기본메시지 수행")]
+        [Theory(DisplayName = "액터시스템 생성후 기본메시지 수행")]
         [InlineData(100)]
         public void CreateSystemAndMessageTestAreOK(int cutoff)
         {
-            akkaService.FromActorSystem(this.Sys);
             // 실 서비스코드는 액터시스템을 최초생성한 이후 이용합니다.
+            // TeskKit은 메시지를 검사할수있는 기능이 탑재된 ActorSystem을 생성해주기때문에 이용합니다.
+            //
             // akkaService.CreateActorSystem("app");
+            akkaService.FromActorSystem(this.Sys);
 
             var actorSystem = akkaService.GetActorSystem();
 

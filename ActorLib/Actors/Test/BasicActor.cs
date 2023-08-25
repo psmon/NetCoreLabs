@@ -20,7 +20,14 @@ namespace ActorLib.Actors.Test
 
                 if (Sender != null)
                 {
-                    Sender.Tell("ok");
+                    if (msg == "hello")
+                    {
+                        Sender.Tell("world");
+                    }
+                    else
+                    {
+                        Sender.Tell("ok");
+                    }
                 }
             });
         }
