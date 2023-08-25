@@ -1,9 +1,8 @@
-using ActorLib;
+ï»¿using ActorLib;
 using ActorLib.Actors.Test;
 
 using Akka.Actor;
 using Akka.Configuration;
-using Akka.TestKit;
 using Akka.TestKit.Xunit2;
 
 using Xunit.Abstractions;
@@ -14,14 +13,12 @@ namespace ActorLibTest
     {
         AkkaService akkaService;
 
-        TestProbe probe;
+        public readonly ITestOutputHelper output;
 
         public AkkaServiceTest(ITestOutputHelper output) : base(GetConfig())
         {
+            this.output = output;
             akkaService = new AkkaService();
-            akkaService.FromActorSystem(this.Sys);
-            probe = this.CreateTestProbe();
-
         }
 
         public static Config GetConfig()
@@ -34,17 +31,21 @@ namespace ActorLibTest
             ");
         }
 
-        [Theory(DisplayName = "¾×ÅÍ½Ã½ºÅÛÀ» »ý¼ºÈÄ ±âº»¸Þ½ÃÁö ¼öÇà")]
+        [Theory(DisplayName = "ì•¡í„°ì‹œìŠ¤í…œì„ ìƒì„±í›„ ê¸°ë³¸ë©”ì‹œì§€ ìˆ˜í–‰")]
         [InlineData(100)]
         public void CreateSystemAndMessageTestAreOK(int cutoff)
         {
+            akkaService.FromActorSystem(this.Sys);
+            // ì‹¤ ì„œë¹„ìŠ¤ì½”ë“œëŠ” ì•¡í„°ì‹œìŠ¤í…œì„ ìµœì´ˆìƒì„±í•œ ì´í›„ ì´ìš©í•©ë‹ˆë‹¤.
+            // akkaService.CreateActorSystem("app");
+
             var actorSystem = akkaService.GetActorSystem();
 
             var basicActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()));
 
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
             {
-                basicActor.Tell("¸Þ½ÃÁöÀü¼Û");
+                basicActor.Tell("ë©”ì‹œì§€ì „ì†¡");
                 ExpectMsg("ok");
             });
 
