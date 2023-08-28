@@ -1,24 +1,16 @@
-﻿using ActorLib;
-using ActorLib.Actors.Test;
+﻿using ActorLib.Actors.Test;
 
 using Akka.Actor;
-using Akka.TestKit.Xunit2;
 
 using Xunit.Abstractions;
 
 namespace ActorLibTest.Intro
 {
-    public class BasicTest : TestKit
-    {
-        private readonly ITestOutputHelper output;
+    public class BasicTest : TestKitXunit
+    {                
 
-        private readonly AkkaService akkaService;
-
-        public BasicTest(ITestOutputHelper output) : base()
+        public BasicTest(ITestOutputHelper output) : base(output)
         {
-            this.output = output;
-            akkaService = new AkkaService();
-            akkaService.FromActorSystem(this.Sys);
         }
 
         [Theory(DisplayName = "Hello에 응당하는 액터테스트")]
@@ -38,7 +30,8 @@ namespace ActorLibTest.Intro
 
                 for (int i = 0; i < testCount; i++)
                 {
-                    ExpectMsg("world");
+                    ExpectMsg("ok");
+                    output.WriteLine("");
                 }
 
                 //ExpectNoMsg();
