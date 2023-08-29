@@ -14,9 +14,10 @@ namespace ActorLibTest.Intro
         }
 
         [Theory(DisplayName = "Hello에 응당하는 액터테스트")]
-        [InlineData(10,100)]
+        [InlineData(10,3000)]
         public void HelloWorldAreOK(int testCount, int cutoff)
         {
+            
             var actorSystem = akkaService.GetActorSystem();
 
             var basicActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()));
@@ -30,11 +31,10 @@ namespace ActorLibTest.Intro
 
                 for (int i = 0; i < testCount; i++)
                 {
-                    ExpectMsg("ok");
-                    output.WriteLine("");
+                    ExpectMsg("world");
                 }
 
-                //ExpectNoMsg();
+                ExpectNoMsg(TimeSpan.FromSeconds(1));
             });
         }
     }

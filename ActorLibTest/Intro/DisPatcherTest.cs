@@ -17,7 +17,7 @@ namespace ActorLibTest.Intro
         {            
         }
 
-        [Theory(DisplayName = "다양한 스레드모델 Dispatcher")]
+        [Theory(DisplayName = "Dispatcher - Thread")]
         [InlineData(3, "synchronized-dispatcher")]
         [InlineData(3, "fork-join-dispatcher")]
         [InlineData(3, "custom-dispatcher")]

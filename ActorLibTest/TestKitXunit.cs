@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using ActorLib;
+﻿using ActorLib;
 
 using Akka.Configuration;
+using Akka.Event;
 using Akka.TestKit.Xunit2;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using Xunit.Abstractions;
 
@@ -27,6 +21,8 @@ namespace ActorLibTest
         private readonly TextWriter _originalOut;
 
         private readonly TextWriter _textWriter;
+
+        protected readonly ILoggingAdapter logger;
 
         public TestKitXunit(ITestOutputHelper output) : base(GetConfig())
         {
@@ -45,6 +41,9 @@ namespace ActorLibTest
             // 시스템생성코드 : akkaService.CreateActorSystem("test");
 
             akkaService.FromActorSystem(this.Sys);
+
+            logger = this.Sys.Log;
+
         }
 
         public static Config GetConfig()
