@@ -48,20 +48,28 @@ namespace ActorLibTest
 
         public static Config GetConfig()
         {
+            // https://getakka.net/articles/actors/dispatchers.html
+
             return ConfigurationFactory.ParseString(@"
                 akka {	
 	                loglevel = DEBUG
 	                loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]                
                 }
 
+                # Dispatchers
+
                 custom-dispatcher {
                     type = Dispatcher
-                    throughput = 1
+                    throughput = 100
                 }
 
                 custom-task-dispatcher {
                   type = TaskDispatcher
-                  throughput = 1
+                  throughput = 100
+                }
+
+                custom-dedicated-dispatcher {
+                  type = PinnedDispatcher
                 }
 
                 fork-join-dispatcher {
@@ -76,7 +84,7 @@ namespace ActorLibTest
 
                 synchronized-dispatcher {
                   type = SynchronizedDispatcher
-                  throughput = 1
+                  throughput = 100
                 }
 
             ");

@@ -25,9 +25,10 @@ namespace ActorLib.Actors.Test
 
                 if (msg.Contains("slowCommand"))
                 {                    
-                    Console.WriteLine($"ReceiveAsync : {msg} {Thread.CurrentThread.Name}-{Thread.CurrentThread.ManagedThreadId} ");
+                    Console.WriteLine($"[{DateTime.Now}] [{Thread.CurrentThread.Name}-{Thread.CurrentThread.ManagedThreadId}]" +
+                        $" : {msg}  ");
 
-                    await Task.Delay(1000);
+                    await Task.Delay(10);
                     
                     if (testProbe != null)
                     {
@@ -40,7 +41,18 @@ namespace ActorLib.Actors.Test
                     {
                         if (msg == "hello")
                         {
-                            Sender.Tell("world");
+                            Console.WriteLine($"[{DateTime.Now}] [{Self.Path}]" +
+                                $" : {msg}  ");
+
+                            if (testProbe != null)
+                            {
+                                testProbe.Tell("world");
+                            }
+                            else
+                            {
+                                Sender.Tell("world");
+                            }
+                            
                         }
                         else
                         {
