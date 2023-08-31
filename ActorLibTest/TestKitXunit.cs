@@ -1,4 +1,6 @@
-﻿using ActorLib;
+﻿using System.Diagnostics;
+
+using ActorLib;
 
 using Akka.Configuration;
 using Akka.Event;
@@ -6,8 +8,13 @@ using Akka.TestKit.Xunit2;
 
 using Microsoft.Extensions.Configuration;
 
+using NBench;
+
+using Pro.NBench.xUnit.XunitExtensions;
+
 using Xunit.Abstractions;
 
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 namespace ActorLibTest
 {
     public abstract class TestKitXunit : TestKit
@@ -24,6 +31,15 @@ namespace ActorLibTest
 
         protected readonly ILoggingAdapter logger;
 
+        protected readonly Dictionary<int, int> _dictionary = new Dictionary<int, int>();
+
+        protected readonly List<int[]> _dataCache = new List<int[]>();
+
+        protected Counter _addCounter;
+
+        protected int _key;
+
+
         public TestKitXunit(ITestOutputHelper output) : base(GetConfig())
         {
             this.output = output;
@@ -34,6 +50,11 @@ namespace ActorLibTest
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configuration = configurationBuilder.Build();
             akkaService = new AkkaService();
+
+
+            // Xunit+Nbench
+            Trace.Listeners.Clear();
+            Trace.Listeners.Add(new XunitTraceListener(output));
 
             // 실 사용서비스에서는 ActorSystem을 생성해야합니다.
             // TestToolKit에서는 테스트검증을 위한 기본 ActorSystem이 생성되어
@@ -48,20 +69,28 @@ namespace ActorLibTest
 
         public static Config GetConfig()
         {
+            // https://getakka.net/articles/actors/dispatchers.html
+
             return ConfigurationFactory.ParseString(@"
                 akka {	
 	                loglevel = DEBUG
 	                loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]                
                 }
 
+                # Dispatchers
+
                 custom-dispatcher {
                     type = Dispatcher
-                    throughput = 1
+                    throughput = 100
                 }
 
                 custom-task-dispatcher {
                   type = TaskDispatcher
-                  throughput = 1
+                  throughput = 100
+                }
+
+                custom-dedicated-dispatcher {
+                  type = PinnedDispatcher
                 }
 
                 fork-join-dispatcher {
@@ -76,7 +105,7 @@ namespace ActorLibTest
 
                 synchronized-dispatcher {
                   type = SynchronizedDispatcher
-                  throughput = 1
+                  throughput = 100
                 }
 
             ");
@@ -88,6 +117,17 @@ namespace ActorLibTest
             Console.SetOut(_originalOut);
             base.Dispose(disposing);
         }
+
+        [PerfCleanup]
+#pragma warning disable xUnit1013 // Public method should be marked as test
+        public void Cleanup(BenchmarkContext context)
+#pragma warning restore xUnit1013 // Public method should be marked as test
+        {
+            _dictionary.Clear();
+            _dataCache.Clear();
+        }
+
+
 
     }
 }

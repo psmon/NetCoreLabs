@@ -9,9 +9,7 @@ using Xunit.Abstractions;
 namespace ActorLibTest.Intro
 {
     public class DisPatcherTest : TestKitXunit
-    {
-        TestProbe testProbe;
-        
+    {        
 
         public DisPatcherTest(ITestOutputHelper output) : base(output)
         {            
@@ -22,11 +20,12 @@ namespace ActorLibTest.Intro
         [InlineData(3, "fork-join-dispatcher")]
         [InlineData(3, "custom-dispatcher")]
         [InlineData(3, "custom-task-dispatcher")]
-        public void DispatcherTest(int nodeCount, string disPatcherName)
+        [InlineData(3, "custom-dedicated-dispatcher")]        
+        public void DispatcherTestAreOK(int nodeCount, string disPatcherName)
         {
             var actorSystem = akkaService.GetActorSystem();
 
-            testProbe = this.CreateTestProbe(actorSystem);
+            TestProbe testProbe = this.CreateTestProbe(actorSystem);
 
             var props = new RoundRobinPool(nodeCount)
                 .WithDispatcher(disPatcherName)
@@ -39,11 +38,13 @@ namespace ActorLibTest.Intro
                 actor.Tell(testProbe.Ref);
             }
 
-            int givenTestCount = 10;
+            int givenTestCount = 1000;
 
-            int expectedCutOff = givenTestCount * 1000;
+            int givenBlockTimePerTest = 10;
 
-            Within(TimeSpan.FromMilliseconds(expectedCutOff), () =>
+            int cutOff = givenTestCount * givenBlockTimePerTest;
+
+            Within(TimeSpan.FromMilliseconds(cutOff), () =>
             {
                 for (int i = 0; i < givenTestCount; i++)
                 {
