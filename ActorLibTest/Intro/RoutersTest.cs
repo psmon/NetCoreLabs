@@ -1,10 +1,8 @@
-﻿using ActorLib;
-using ActorLib.Actors.Test;
+﻿using ActorLib.Actors.Test;
 
 using Akka.Actor;
 using Akka.Routing;
 using Akka.TestKit;
-using Akka.TestKit.Xunit2;
 
 using Xunit.Abstractions;
 

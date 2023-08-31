@@ -37,12 +37,12 @@ namespace ActorLib.Actors.Test
                 }
                 else
                 {
+                    Console.WriteLine($"[{DateTime.Now}] [{Self.Path}] : {msg} ");
+
                     if (Sender != null)
                     {
                         if (msg == "hello")
                         {
-                            Console.WriteLine($"[{DateTime.Now}] [{Self.Path}]" +
-                                $" : {msg}  ");
 
                             if (testProbe != null)
                             {
