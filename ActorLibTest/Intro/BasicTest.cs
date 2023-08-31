@@ -54,12 +54,12 @@ namespace ActorLibTest.Intro
         // Perfectly valid counter setup
         [PerfBenchmark(NumberOfIterations = 3, RunMode = RunMode.Throughput,
         RunTimeMilliseconds = 1000, TestMode = TestMode.Test)]
-        [CounterThroughputAssertion("TestCounter", MustBe.GreaterThan, 100.0d)]
-        [CounterTotalAssertion("TestCounter", MustBe.GreaterThan, 150.0d)]
+        [CounterThroughputAssertion("TestCounter", MustBe.GreaterThan, 1000.0d)]
+        [CounterTotalAssertion("TestCounter", MustBe.GreaterThan, 1500.0d)]
         [CounterMeasurement("TestCounter")]
         public void HelloWorldPerformanceTest()
         {
-            HelloWorldAreOK(10, 3000, true);
+            HelloWorldAreOK(100, 3000, true);
         }
 
         [PerfSetup]
