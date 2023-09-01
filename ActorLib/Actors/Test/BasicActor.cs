@@ -20,14 +20,9 @@ namespace ActorLib.Actors.Test
             });
 
             ReceiveAsync<string>(async msg =>
-            {
-                logger.Info($"{msg} 를 전송받았습니다.");
-
+            {                
                 if (msg.Contains("slowCommand"))
-                {                    
-                    Console.WriteLine($"[{DateTime.Now}] [{Thread.CurrentThread.Name}-{Thread.CurrentThread.ManagedThreadId}]" +
-                        $" : {msg}  ");
-
+                {                                        
                     await Task.Delay(10);
                     
                     if (testProbe != null)
@@ -36,28 +31,14 @@ namespace ActorLib.Actors.Test
                     }
                 }
                 else
-                {
-                    Console.WriteLine($"[{DateTime.Now}] [{Self.Path}] : {msg} ");
-
-                    if (Sender != null)
+                {                    
+                    if (testProbe != null)
                     {
-                        if (msg == "hello")
-                        {
-
-                            if (testProbe != null)
-                            {
-                                testProbe.Tell("world");
-                            }
-                            else
-                            {
-                                Sender.Tell("world");
-                            }
-                            
-                        }
-                        else
-                        {
-                            Sender.Tell("ok");
-                        }
+                        testProbe.Tell("world");
+                    }
+                    else
+                    {
+                        Sender.Tell("world");
                     }
                 }                                
             });
