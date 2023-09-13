@@ -3,15 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp", "BlazorApp\BlazorApp.csproj", "{52DE08A0-4E9C-44A1-A792-390C6AC5275A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorLib", "ActorLib\ActorLib.csproj", "{3A88FB52-DA4E-4F48-BE93-54A8E022FA21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActorLib", "ActorLib\ActorLib.csproj", "{3A88FB52-DA4E-4F48-BE93-54A8E022FA21}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActorLibTest", "ActorLibTest\ActorLibTest.csproj", "{9154AC77-7ABE-4021-8338-426EA616CB4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorLibTest", "ActorLibTest\ActorLibTest.csproj", "{9154AC77-7ABE-4021-8338-426EA616CB4B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21} = {3A88FB52-DA4E-4F48-BE93-54A8E022FA21}
-		{52DE08A0-4E9C-44A1-A792-390C6AC5275A} = {52DE08A0-4E9C-44A1-A792-390C6AC5275A}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorActorApp.Server", "BlazorActorApp\Server\BlazorActorApp.Server.csproj", "{3FA19FFE-CDE9-4008-A749-32FB73B6FF56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorActorApp.Client", "BlazorActorApp\Client\BlazorActorApp.Client.csproj", "{63D8812E-5C58-4ED0-9B8B-BA5F637315F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorActorApp.Shared", "BlazorActorApp\Shared\BlazorActorApp.Shared.csproj", "{3B8C28B5-F9D9-486F-8F14-7A9463E22A71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +22,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{52DE08A0-4E9C-44A1-A792-390C6AC5275A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52DE08A0-4E9C-44A1-A792-390C6AC5275A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52DE08A0-4E9C-44A1-A792-390C6AC5275A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52DE08A0-4E9C-44A1-A792-390C6AC5275A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,6 +30,18 @@ Global
 		{9154AC77-7ABE-4021-8338-426EA616CB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9154AC77-7ABE-4021-8338-426EA616CB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9154AC77-7ABE-4021-8338-426EA616CB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FA19FFE-CDE9-4008-A749-32FB73B6FF56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FA19FFE-CDE9-4008-A749-32FB73B6FF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FA19FFE-CDE9-4008-A749-32FB73B6FF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FA19FFE-CDE9-4008-A749-32FB73B6FF56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63D8812E-5C58-4ED0-9B8B-BA5F637315F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D8812E-5C58-4ED0-9B8B-BA5F637315F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D8812E-5C58-4ED0-9B8B-BA5F637315F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D8812E-5C58-4ED0-9B8B-BA5F637315F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B8C28B5-F9D9-486F-8F14-7A9463E22A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B8C28B5-F9D9-486F-8F14-7A9463E22A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B8C28B5-F9D9-486F-8F14-7A9463E22A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B8C28B5-F9D9-486F-8F14-7A9463E22A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
