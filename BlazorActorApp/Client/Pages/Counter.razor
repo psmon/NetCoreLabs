@@ -1,5 +1,6 @@
 ﻿@page "/counter"
 
+
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -8,11 +9,86 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+<div class="diagram-container">
+    <CascadingValue Value="Diagram" IsFixed="true">
+        <DiagramCanvas></DiagramCanvas>
+    </CascadingValue>
+</div>
+
 @code {
+
+    // https://blazor-diagrams.zhaytam.com/
+
     private int currentCount = 0;
+
+    private BlazorDiagram Diagram { get; set; } = null!;
+
+    private NodeModel LastNode { get; set; }    
+
+    protected override void OnInitialized()
+    {
+        var options = new BlazorDiagramOptions
+            {
+                AllowMultiSelection = true,
+                Zoom =
+            {
+                Enabled = false,
+            },
+                Links =
+            {
+                DefaultRouter = new NormalRouter(),
+                DefaultPathGenerator = new SmoothPathGenerator()
+            },
+            };
+
+        Diagram = new BlazorDiagram(options);
+
+        var firstNode = Diagram.Nodes.Add(new NodeModel(position: new Point(50, 50))
+            {
+                Title = "Node 1"
+            });
+
+        var secondNode = Diagram.Nodes.Add(new NodeModel(position: new Point(200, 100))
+            {
+                Title = "Node 2"
+            });
+
+        var leftPort = secondNode.AddPort(PortAlignment.Left);
+        var rightPort = secondNode.AddPort(PortAlignment.Right);
+
+        // The connection point will be the intersection of
+        // a line going from the target to the center of the source
+        var sourceAnchor = new ShapeIntersectionAnchor(firstNode);
+        // The connection point will be the port's position
+        var targetAnchor = new SinglePortAnchor(leftPort);
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+
+        LastNode = secondNode;
+
+    }
+
+    private void AddNode()
+    {
+        double newX = LastNode.Position.X + 50;
+        double newY = LastNode.Position.Y + 50;
+
+        var nextNode = Diagram.Nodes.Add(new NodeModel(position: new Point(newX, newY))
+        {
+            Title = $"Node {currentCount+2}"
+        });
+
+        var leftPort = nextNode.AddPort(PortAlignment.Left);
+        var rightPort = nextNode.AddPort(PortAlignment.Right);
+
+        var sourceAnchor = new ShapeIntersectionAnchor(LastNode);
+        var targetAnchor = new SinglePortAnchor(leftPort);
+
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+    }
 
     private void IncrementCount()
     {
         currentCount++;
+        AddNode();
     }
 }
