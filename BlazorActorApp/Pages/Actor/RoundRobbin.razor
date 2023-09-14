@@ -126,9 +126,10 @@
             string actorName = actorInfo.Key;
             int messageCount = actorInfo.Value;
             ActorNodes[actorName].MessageCount = messageCount;
+            ActorNodes[actorName].RefreshAll();
         }
 
-        StateHasChanged();
+        //StateHasChanged();
 
     }
 
