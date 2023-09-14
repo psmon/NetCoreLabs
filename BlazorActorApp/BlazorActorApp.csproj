@@ -7,19 +7,15 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Components\ActorWidget.razor.css" />
-    <None Remove="Pages\Counter.razor.css" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Components\ActorWidget.razor.css" />
-    <Content Include="Pages\Counter.razor.css" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Z.Blazor.Diagrams" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ActorLib\ActorLib.csproj" />
   </ItemGroup>
 
 </Project>

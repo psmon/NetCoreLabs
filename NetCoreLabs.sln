@@ -11,6 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorLibTest", "ActorLibTes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorActorApp", "BlazorActorApp\BlazorActorApp.csproj", "{97083482-80D5-4132-8C3B-03BFE1BE297A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21} = {3A88FB52-DA4E-4F48-BE93-54A8E022FA21}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,7 +8,9 @@ namespace ActorLib
     {
         private ActorSystem actorSystem;
 
-        public void CreateActorSystem(string name)
+        private Dictionary<string, IActorRef> actors = new Dictionary<string, IActorRef>();
+
+        public ActorSystem CreateActorSystem(string name)
         {
             if (actorSystem == null)
             {
@@ -17,7 +19,9 @@ namespace ActorLib
             else
             {
                 throw new Exception("The actor system has already been created.");
-            }                
+            }
+
+            return actorSystem;
         }
 
         public void FromActorSystem(ActorSystem _actorSystem) 
@@ -33,7 +37,6 @@ namespace ActorLib
 
         }
 
-
         public ActorSystem GetActorSystem()
         {
             if (actorSystem == null)
@@ -42,6 +45,19 @@ namespace ActorLib
             }
 
             return actorSystem;
+        }
+
+        public void AddActor(string name, IActorRef actor) 
+        {
+            if (!actors.ContainsKey(name))
+            {
+                actors[name] = actor;
+            }
+        }
+
+        public IActorRef GetActor(string name) 
+        { 
+            return actors[name];
         }
     }
 }

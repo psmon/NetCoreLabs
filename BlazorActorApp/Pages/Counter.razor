@@ -48,12 +48,12 @@
 
         var firstNode = Diagram.Nodes.Add(new NodeModel(position: new Point(50, 50))
             {
-                Title = "Akka System"
+                Title = "BlazorDiagram"
             });
 
         var secondNode = Diagram.Nodes.Add(new NodeModel(position: new Point(200, 100))
             {
-                Title = "RouterActor"
+                Title = "RouterNode"
             });        
 
         var sourceAnchor = new ShapeIntersectionAnchor(firstNode);
@@ -75,7 +75,7 @@
 
         var nextNode = Diagram.Nodes.Add(new ActorNode(position: new Point(newX, newY))
         {
-            Title = $"WorkActor-{currentCount}",
+            Title = $"DiagramNodes{currentCount}",
             MessageCount = currentCount
         });
 
