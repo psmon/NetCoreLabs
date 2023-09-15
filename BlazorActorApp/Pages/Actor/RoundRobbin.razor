@@ -137,12 +137,13 @@
         {
             string actorName = actorInfo.Key;
             int messageCount = actorInfo.Value;
-            ActorNodes[actorName].MessageCount = messageCount;
-            ActorNodes[actorName].RefreshAll();
+
+            if (ActorNodes[actorName].MessageCount != messageCount)
+            {
+                ActorNodes[actorName].MessageCount = messageCount;
+                ActorNodes[actorName].RefreshAll();                
+            }            
         }
-
-        //StateHasChanged();
-
     }
 
     private void AddNode(bool onlyUI, string nodeName, int messageCount)
