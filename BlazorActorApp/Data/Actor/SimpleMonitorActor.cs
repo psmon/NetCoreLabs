@@ -36,15 +36,22 @@ namespace BlazorActorApp.Data.Actor
 
                 logger.Info($"SenderPath:{actorName}");
 
-                if (!MessageCounts.ContainsKey(actorName))
+                if (msg == "done")
                 {
-                    MessageCounts[actorName] = 1;
+                    // Actore Created
+                    MessageCounts[actorName] = 0;
                 }
                 else
                 {
-                    MessageCounts[actorName]++;
+                    if (!MessageCounts.ContainsKey(actorName))
+                    {
+                        MessageCounts[actorName] = 1;
+                    }
+                    else
+                    {
+                        MessageCounts[actorName]++;
+                    }
                 }
-
             });
         }
     }

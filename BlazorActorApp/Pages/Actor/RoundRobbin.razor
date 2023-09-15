@@ -161,8 +161,8 @@
         }
 
         //Create UI
-        double newX = RouterNode.Position.X + 50;
-        double newY = RouterNode.Position.Y + 50;
+        double newX = (currentCount * 200);
+        double newY = RouterNode.Position.Y + 150;
 
         var nextNode = Diagram.Nodes.Add(new ActorNode(position: new Point(newX, newY))
         {

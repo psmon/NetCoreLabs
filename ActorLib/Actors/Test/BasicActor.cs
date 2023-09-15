@@ -17,6 +17,8 @@ namespace ActorLib.Actors.Test
             ReceiveAsync<IActorRef>(async actorRef =>
             {
                 testProbe = actorRef;
+
+                testProbe.Tell("done");
             });
 
             ReceiveAsync<string>(async msg =>
