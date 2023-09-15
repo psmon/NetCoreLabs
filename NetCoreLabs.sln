@@ -10,9 +10,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorLibTest", "ActorLibTes
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21} = {3A88FB52-DA4E-4F48-BE93-54A8E022FA21}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorActorApp", "BlazorActorApp\BlazorActorApp.csproj", "{97083482-80D5-4132-8C3B-03BFE1BE297A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorActorApp", "BlazorActorApp\BlazorActorApp.csproj", "{97083482-80D5-4132-8C3B-03BFE1BE297A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3A88FB52-DA4E-4F48-BE93-54A8E022FA21} = {3A88FB52-DA4E-4F48-BE93-54A8E022FA21}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루션 항목", "{E13FF6D7-25D5-4C6C-B5F5-BD6CB5D105FA}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

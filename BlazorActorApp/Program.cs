@@ -14,6 +14,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<AkkaService>();
+builder.Services.AddBlazorBootstrap();
 
 
 var app = builder.Build();
