@@ -1,0 +1,92 @@
+﻿@page "/counter"
+@using BlazorActorApp.Components;
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<div class="diagram-container">    
+    <CascadingValue Value="Diagram" IsFixed="true">
+        <DiagramCanvas></DiagramCanvas>
+    </CascadingValue>
+</div>
+
+@code {
+
+    // https://blazor-diagrams.zhaytam.com/
+
+    private int currentCount = 0;
+
+    private BlazorDiagram Diagram { get; set; } = null!;
+
+    private NodeModel RouterNode { get; set; }    
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        var options = new BlazorDiagramOptions
+            {
+                AllowMultiSelection = true,
+                Zoom =
+            {
+                Enabled = false,
+            },
+                Links =
+            {
+                DefaultRouter = new NormalRouter(),
+                DefaultPathGenerator = new SmoothPathGenerator()
+            },
+            };
+
+        Diagram = new BlazorDiagram(options);
+
+        Diagram.RegisterComponent<ActorNode, ActorWidget>();
+
+        var firstNode = Diagram.Nodes.Add(new NodeModel(position: new Point(50, 50))
+            {
+                Title = "BlazorDiagram"
+            });
+
+        var secondNode = Diagram.Nodes.Add(new NodeModel(position: new Point(200, 100))
+            {
+                Title = "RouterNode"
+            });        
+
+        var sourceAnchor = new ShapeIntersectionAnchor(firstNode);
+        var targetAnchor = new ShapeIntersectionAnchor(secondNode);
+
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+        
+
+        RouterNode = secondNode;        
+    }
+
+
+    private void AddNode()
+    {
+        currentCount++;
+
+        double newX = RouterNode.Position.X + 50;
+        double newY = RouterNode.Position.Y + 50;
+
+        var nextNode = Diagram.Nodes.Add(new ActorNode(position: new Point(newX, newY))
+        {
+            Title = $"DiagramNodes{currentCount}",
+            MessageCount = currentCount
+        });
+
+        var sourceAnchor = new ShapeIntersectionAnchor(RouterNode);
+        var targetAnchor = new ShapeIntersectionAnchor(nextNode);
+
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+    }
+
+    private void IncrementCount()
+    {
+        AddNode();
+    }
+}

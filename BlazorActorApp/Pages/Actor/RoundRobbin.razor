@@ -1,0 +1,195 @@
+﻿@page "/actor/roundrobin"
+@using ActorLib.Actors.Test;
+@using Akka.Actor;
+@using Akka.Routing;
+@using BlazorActorApp.Components;
+@using BlazorActorApp.Data.Actor;
+
+
+<PageTitle>round-robin</PageTitle>
+
+<h1>round-robin router actor</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Add WorkActor</button>
+
+
+<p></p>
+
+<div class="mb-3">
+    <label class="form-label">전송횟수</label>
+    <NumberInput TValue="int" @bind-Value="@amount" Placeholder="Enter Message Count" />
+</div>
+<div class="mb-3">@amount 개의메시지가 전송됩니다.</div>
+
+<button class="btn btn-primary" @onclick="SendHello">Send Hello</button>
+
+<div class="diagram-container">    
+    <CascadingValue Value="Diagram" IsFixed="true">
+        <DiagramCanvas></DiagramCanvas>
+    </CascadingValue>
+</div>
+
+@code {
+
+    // https://blazor-diagrams.zhaytam.com/
+
+    private static System.Timers.Timer aTimer;
+
+    private int amount = 10;
+
+    private int currentCount = 0;
+
+    private BlazorDiagram Diagram { get; set; } = null!;
+
+    private NodeModel RouterNode { get; set; }
+
+    private IActorRef RouterActor { get; set; }
+
+    private IActorRef MonitorActor { get; set; }
+
+    private ActorSystem ActorSystem { get; set; }
+
+    private Dictionary<string, ActorNode> ActorNodes = new Dictionary<string, ActorNode>();
+
+    private void StartTimer()
+    {
+        aTimer = new System.Timers.Timer(1000);
+        aTimer.Elapsed += OnTimer;
+        aTimer.Enabled = true;
+    }
+
+    public void OnTimer(Object source, System.Timers.ElapsedEventArgs e)
+    {        
+        // TODO : Improve sync method in real time
+        InvokeAsync(SyncCount);        
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Actor
+        ActorSystem = AkkaService.GetActorSystem();        
+        RouterActor = AkkaService.GetActor("roundrobin");        
+        MonitorActor = AkkaService.GetActor("simpleMonitorActor");
+
+        // UI
+        var options = new BlazorDiagramOptions
+            {
+                AllowMultiSelection = true,
+                Zoom =
+            {
+                Enabled = false,
+            },
+                Links =
+            {
+                DefaultRouter = new NormalRouter(),
+                DefaultPathGenerator = new SmoothPathGenerator()
+            },
+            };
+
+        Diagram = new BlazorDiagram(options);
+
+        Diagram.RegisterComponent<ActorNode, ActorWidget>();
+
+        var firstNode = Diagram.Nodes.Add(new NodeModel(position: new Point(50, 50))
+            {
+                Title = "Akka System"
+            });
+
+        var secondNode = Diagram.Nodes.Add(new NodeModel(position: new Point(200, 100))
+            {
+                Title = "RouterActor"
+            });        
+
+        var sourceAnchor = new ShapeIntersectionAnchor(firstNode);
+        var targetAnchor = new ShapeIntersectionAnchor(secondNode);
+
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+
+        RouterNode = secondNode;
+
+        await SyncNode();
+
+        StartTimer();
+
+    }
+
+    private async Task SyncNode()
+    {
+        var result = await MonitorActor.Ask(new ActorCountInfoReq());
+        var resultInfo = result as ActorCountInfoRes;
+
+        foreach (var actorInfo in resultInfo.MessageCounts)
+        {
+            string actorName = actorInfo.Key;
+            int messageCount = actorInfo.Value;
+            AddNode(true, actorName, messageCount);
+        }
+    }
+
+    private async Task SyncCount()
+    {
+        var result = await MonitorActor.Ask(new ActorCountInfoReq());
+        var resultInfo = result as ActorCountInfoRes;
+
+        foreach (var actorInfo in resultInfo.MessageCounts)
+        {
+            string actorName = actorInfo.Key;
+            int messageCount = actorInfo.Value;
+            ActorNodes[actorName].MessageCount = messageCount;
+            ActorNodes[actorName].RefreshAll();
+        }
+
+        //StateHasChanged();
+
+    }
+
+    private void AddNode(bool onlyUI, string nodeName, int messageCount)
+    {
+        currentCount++;
+        string NodeName = nodeName == "auto" ? $"WorkActor{currentCount}" : nodeName;
+
+        //Create Actor
+        if (!onlyUI)
+        {
+            var workActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
+            workActor.Tell(MonitorActor);
+
+            var routee = Routee.FromActorRef(workActor);
+            RouterActor.Tell(new AddRoutee(routee));
+        }
+
+        //Create UI
+        double newX = RouterNode.Position.X + 50;
+        double newY = RouterNode.Position.Y + 50;
+
+        var nextNode = Diagram.Nodes.Add(new ActorNode(position: new Point(newX, newY))
+        {
+            Title = NodeName,
+            MessageCount = messageCount
+        });
+
+        ActorNodes[NodeName] = nextNode;
+
+        var sourceAnchor = new ShapeIntersectionAnchor(RouterNode);
+        var targetAnchor = new ShapeIntersectionAnchor(nextNode);
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
+    }
+
+    private void IncrementCount()
+    {
+        AddNode(false, "auto", 0);
+    }
+
+    private void SendHello()
+    {
+        if (amount > 0)
+        {
+            for(int i = 0; i < amount; i++)
+            {
+                RouterActor.Tell("hello");
+            }
+        }
+    }
+}

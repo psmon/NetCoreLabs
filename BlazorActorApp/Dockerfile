@@ -3,20 +3,19 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["BlazorApp/BlazorApp.csproj", "BlazorApp/"]
-RUN dotnet restore "BlazorApp/BlazorApp.csproj"
+COPY ["BlazorActorApp/BlazorActorApp.csproj", "BlazorActorApp/"]
+RUN dotnet restore "BlazorActorApp/BlazorActorApp.csproj"
 COPY . .
-WORKDIR "/src/BlazorApp"
-RUN dotnet build "BlazorApp.csproj" -c Release -o /app/build
+WORKDIR "/src/BlazorActorApp"
+RUN dotnet build "BlazorActorApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BlazorApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "BlazorActorApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BlazorApp.dll"]
+ENTRYPOINT ["dotnet", "BlazorActorApp.dll"]
