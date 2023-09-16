@@ -1,4 +1,4 @@
-﻿@page "/actor/roundrobin"
+﻿@page "/actor/broadcast"
 @using ActorLib.Actors.Test;
 @using Akka.Actor;
 @using Akka.Routing;
@@ -6,9 +6,9 @@
 @using BlazorActorApp.Data.Actor;
 
 
-<PageTitle>round-robin</PageTitle>
+<PageTitle>broad-cast</PageTitle>
 
-<h1>round-robin router actor</h1>
+<h1>broad-cast router actor</h1>
 
 <p role="status">Current count: @currentCount</p>
 
@@ -70,8 +70,8 @@
     {
         // Actor
         ActorSystem = AkkaService.GetActorSystem();        
-        RouterActor = AkkaService.GetActor("roundrobin");        
-        MonitorActor = AkkaService.GetActor("roundrobinMonitor");
+        RouterActor = AkkaService.GetActor("broadcast");
+        MonitorActor = AkkaService.GetActor("broadcastMonitor");
 
         // UI
         var options = new BlazorDiagramOptions
@@ -149,7 +149,7 @@
     private void AddNode(bool onlyUI, string nodeName, int messageCount)
     {
         currentCount++;
-        string NodeName = nodeName == "auto" ? $"WorkActorA{currentCount}" : nodeName;
+        string NodeName = nodeName == "auto" ? $"WorkActorB{currentCount}" : nodeName;
 
         //Create Actor
         if (!onlyUI)
