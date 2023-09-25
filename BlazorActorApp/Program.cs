@@ -7,6 +7,8 @@ using Akka.Routing;
 using BlazorActorApp.Data;
 using BlazorActorApp.Data.Actor;
 
+using MudBlazor.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,7 +17,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<AkkaService>();
 builder.Services.AddBlazorBootstrap();
-
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

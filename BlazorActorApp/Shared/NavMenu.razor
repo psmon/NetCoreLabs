@@ -1,58 +1,14 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorActorApp</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<MudNavMenu>
+    <MudNavLink Icon="@Icons.Material.Filled.AllInclusive" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+    <MudNavGroup Icon="@Icons.Material.Filled.Android" Title="Blazor" >
+        <MudNavLink Icon="@Icons.Material.Filled.BuildCircle" Href="/counter" Match="NavLinkMatch.All">Count</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.BuildCircle" Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetchdata</MudNavLink>
+    </MudNavGroup>    
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="actor/roundrobin">
-                <span class="oi oi-plus" aria-hidden="true"></span> RoundRobin Router
-            </NavLink>
-        </div>
+    <MudNavGroup Icon="@Icons.Material.Filled.Help" Title="Akka">
+        <MudNavLink Icon="@Icons.Material.Filled.Help" Href="/actor/roundrobin" Match="NavLinkMatch.Prefix">Roundrobin</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Help" Href="/actor/broadcast" Match="NavLinkMatch.Prefix">Broadcast</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Help" Href="/actor/random" Match="NavLinkMatch.Prefix">Random</MudNavLink>
+    </MudNavGroup>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="actor/broadcast">
-                <span class="oi oi-plus" aria-hidden="true"></span> BroadCast Router
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="actor/random">
-                <span class="oi oi-plus" aria-hidden="true"></span> Random Router
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+</MudNavMenu>
