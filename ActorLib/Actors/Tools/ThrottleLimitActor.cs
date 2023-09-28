@@ -3,22 +3,7 @@ using Akka.Event;
 
 namespace ActorLib.Actors.Tools
 {
-    public class SetTarget
-    {
-        public SetTarget(IActorRef @ref)
-        {
-            Ref = @ref;
-        }
-
-        public IActorRef Ref { get; }
-    }
-
-    public class EventCmd
-    {
-        public string Message { get; set; }
-    }
-
-    public class Flush { }
+    // Strem을 제어하는 부분은 AkkaStream이 활용된 ThrottleActor 버전을 추천
 
     public class ThrottleLimitActor : ReceiveActor
     {
