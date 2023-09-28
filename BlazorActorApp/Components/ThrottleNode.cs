@@ -3,10 +3,11 @@ using Blazor.Diagrams.Core.Models;
 
 namespace BlazorActorApp.Components
 {
-    public class ActorNode : NodeModel
+    public class ThrottleNode : NodeModel
     {
-        public ActorNode(Point? position = null) : base(position) { }
+        public ThrottleNode(Point? position = null) : base(position) { }
 
+        public int ProcessCouuntPerSec { get; set; }
 
         public double MessageCount { get; set; }
 

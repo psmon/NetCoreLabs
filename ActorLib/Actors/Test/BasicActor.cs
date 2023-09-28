@@ -1,4 +1,6 @@
-﻿using Akka.Actor;
+﻿using ActorLib.Actors.Tools;
+
+using Akka.Actor;
 using Akka.Event;
 
 using NLog;
@@ -20,6 +22,16 @@ namespace ActorLib.Actors.Test
 
                 testProbe.Tell("done");
             });
+
+            ReceiveAsync<Todo>(async msg =>
+            {
+                if (testProbe != null)
+                {
+                    testProbe.Tell(msg);
+                }
+            });
+
+
 
             ReceiveAsync<string>(async msg =>
             {                

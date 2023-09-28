@@ -13,17 +13,21 @@ namespace ActorLib.Actors.Tools
 
         private IActorRef? consumer;
 
-        private readonly IActorRef _throttler;
+        private IActorRef _throttler;
 
         private readonly IMaterializer _materializer;
+
+        private int _processCouuntPerSec;
 
         public ThrottleActor(int processCouuntPerSec)
         {
             _materializer = Context.Materializer();
 
+            _processCouuntPerSec = processCouuntPerSec;
+
             _throttler =
                 Source.ActorRef<object>(1000, OverflowStrategy.DropNew)
-                      .Throttle(processCouuntPerSec, TimeSpan.FromSeconds(1), processCouuntPerSec, ThrottleMode.Shaping)
+                      .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
                       .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
                       .Run(_materializer);
 
@@ -31,6 +35,29 @@ namespace ActorLib.Actors.Tools
             {
                 consumer = target.Ref;
             });
+
+
+            ReceiveAsync<TPSInfoReq>(async target =>
+            {
+                Sender.Tell(_processCouuntPerSec);
+            });
+
+            ReceiveAsync<ChangeTPS>(async msg =>
+            {
+                var oldThrottler = _throttler;
+
+                _processCouuntPerSec = msg.processCouuntPerSec;
+
+                _throttler =
+                    Source.ActorRef<object>(1000, OverflowStrategy.DropNew)
+                            .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
+                            .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
+                            .Run(_materializer);
+
+                oldThrottler.Tell(PoisonPill.Instance);
+
+            });
+
 
             ReceiveAsync<TodoQueue>(async msg =>
             {

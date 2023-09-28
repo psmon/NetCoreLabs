@@ -1,5 +1,6 @@
 using ActorLib;
 using ActorLib.Actors.Test;
+using ActorLib.Actors.Tools;
 
 using Akka.Actor;
 using Akka.Routing;
@@ -32,6 +33,13 @@ var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new R
 akkaService.AddActor("roundrobin", roundrobin);
 var roundrobinMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("roundrobinMonitor", roundrobinMonitor);
+
+
+// Create Throttle Actor
+var throttlerouter = actorSystem.ActorOf(Props.Create(() => new ThrottleActor(5)));
+throttlerouter.Tell(new SetTarget(roundrobin));
+akkaService.AddActor("throttlerouter", throttlerouter);
+
 
 // Create BroadCast Router
 var broadcast = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new BroadcastPool(0)), "broadcast");

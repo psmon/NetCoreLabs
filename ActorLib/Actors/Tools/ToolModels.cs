@@ -35,4 +35,13 @@ namespace ActorLib.Actors.Tools
     {
         public Todo Todo { get; set; }
     }
+
+    public class ChangeTPS
+    {
+        public int processCouuntPerSec { get; set; }
+    }
+
+    public class TPSInfoReq
+    {
+    }
 }

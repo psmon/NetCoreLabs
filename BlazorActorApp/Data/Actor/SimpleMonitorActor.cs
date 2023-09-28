@@ -1,4 +1,6 @@
-﻿using Akka.Actor;
+﻿using ActorLib.Actors.Tools;
+
+using Akka.Actor;
 using Akka.Event;
 
 namespace BlazorActorApp.Data.Actor
@@ -28,6 +30,21 @@ namespace BlazorActorApp.Data.Actor
             ReceiveAsync<ActorCountInfoReq>(async msg =>
             {
                 Sender.Tell(new ActorCountInfoRes(MessageCounts));
+            });
+
+            ReceiveAsync<Todo>(async msg =>
+            {
+                string actorName = Sender.Path.Name;
+
+                if (!MessageCounts.ContainsKey(actorName))
+                {
+                    MessageCounts[actorName] = 1;
+                }
+                else
+                {
+                    MessageCounts[actorName]++;
+                }
+
             });
 
             ReceiveAsync<string>(async msg =>
