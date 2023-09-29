@@ -31,6 +31,9 @@
     </CascadingValue>
 </div>
 
+<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudMarkdown Value="@Value" />
+
 @code {
 
     // https://blazor-diagrams.zhaytam.com/
@@ -193,4 +196,26 @@
             }
         }
     }
+}
+
+@code
+{
+    private string Value { get; } =
+        @"
+```
+// Create ActorSystem
+var actorSystem = akkaService.CreateActorSystem();
+
+// Create RoundRobin Router
+var random = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RandomPool(0)));
+
+// Create Worker and Add Routee
+var workActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
+var routee = Routee.FromActorRef(workActor);
+random.Tell(new AddRoutee(routee));
+
+// Say Hello
+random.Tell(""Hello"");
+```
+";
 }

@@ -206,10 +206,10 @@
     @"
 ```
 // Create ActorSystem
-var actorSystem = akkaService.CreateActorSystem(""BlazorActorSystem"");
+var actorSystem = akkaService.CreateActorSystem();
 
 // Create RoundRobin Router
-var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)), ""roundrobin"");
+var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)));
 
 // Create Worker and Add Routee
 var workActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
