@@ -22,7 +22,7 @@
     <label class="form-label">전송횟수</label>
     <NumberInput TValue="int" @bind-Value="@amount" Placeholder="Enter Message Count" />
 </div>
-<div class="mb-3">@amount 개의메시지가 전송됩니다.</div>
+<div class="mb-3">@amount 개의메시지가 @currentTPS TPS전송됩니다.</div>
 
 <button class="btn btn-primary" @onclick="SendHello">Send Hello</button>
 
@@ -42,7 +42,7 @@
 
     private int currentCount = 0;
 
-    private int currentTPS = 5;
+    private int currentTPS { get; set; } = 5;
 
     private BlazorDiagram Diagram { get; set; } = null!;
 
@@ -80,6 +80,8 @@
         RouterActor = AkkaService.GetActor("roundrobin");        
         MonitorActor = AkkaService.GetActor("roundrobinMonitor");
         ThrottleActor = AkkaService.GetActor("throttlerouter");
+
+        ThrottleActor.Tell(new SetTarget(RouterActor));
 
         ThrottleActor.Tell(new ChangeTPS() { processCouuntPerSec = currentTPS });
 
@@ -160,6 +162,7 @@
         {
             ThrottleActor.Tell(new ChangeTPS() { processCouuntPerSec = _throttleNode.ProcessCouuntPerSec });
             currentTPS = _throttleNode.ProcessCouuntPerSec;
+            StateHasChanged();
 
         }
 

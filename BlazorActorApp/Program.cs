@@ -39,7 +39,6 @@ akkaService.AddActor("roundrobinMonitor", roundrobinMonitor);
 
 // Create Throttle Actor
 var throttlerouter = actorSystem.ActorOf(Props.Create(() => new ThrottleActor(5)));
-throttlerouter.Tell(new SetTarget(roundrobin));
 akkaService.AddActor("throttlerouter", throttlerouter);
 
 
