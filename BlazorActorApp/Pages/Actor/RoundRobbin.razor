@@ -110,9 +110,7 @@
         var sourceAnchor = new ShapeIntersectionAnchor(firstNode);
         var targetAnchor = new ShapeIntersectionAnchor(secondNode);
 
-        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));
-
-        link.PathGenerator = new smo
+        var link = Diagram.Links.Add(new LinkModel(sourceAnchor, targetAnchor));        
 
         RouterNode = secondNode;
 
