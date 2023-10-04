@@ -34,6 +34,8 @@ namespace ActorLibTest.Intro
             for (int i = 0; i < nodeCount; i++)
             {
                 actor.Tell(testProbe.Ref);
+
+                testProbe.ExpectMsg("done");
             }
 
             int cutOff = 3000;

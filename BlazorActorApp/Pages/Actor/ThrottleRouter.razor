@@ -259,6 +259,9 @@ var workActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
 var routee = Routee.FromActorRef(workActor);
 roundrobin.Tell(new AddRoutee(routee));
 
+// Change TPS at Runtime
+throttle.Tell(new ChangeTPS() { processCouuntPerSec = 3 });
+
 // Say Hello
 throttle.Tell(new TodoQueue()
 {

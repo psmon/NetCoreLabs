@@ -30,6 +30,8 @@ namespace ActorLibTest.Intro
 
             basicActor.Tell(testProbe.Ref);
 
+            testProbe.ExpectMsg("done");
+
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
             {
                 for (int i = 0; i < testCount; i++)
