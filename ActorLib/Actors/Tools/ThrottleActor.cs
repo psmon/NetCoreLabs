@@ -46,6 +46,8 @@ namespace ActorLib.Actors.Tools
             {
                 var oldThrottler = _throttler;
 
+                logger.Info($"Tps Changed {_processCouuntPerSec} -> {msg.processCouuntPerSec}");
+
                 _processCouuntPerSec = msg.processCouuntPerSec;
 
                 _throttler =
@@ -54,7 +56,7 @@ namespace ActorLib.Actors.Tools
                             .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
                             .Run(_materializer);
 
-                oldThrottler.Tell(PoisonPill.Instance);
+                //oldThrottler.Tell(PoisonPill.Instance);
 
             });
 

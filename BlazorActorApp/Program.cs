@@ -41,6 +41,7 @@ builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
 
 builder.Services.AddScoped<DebugService>();
+builder.Services.AddScoped<JsConsole>();
 
 builder.Services.AddResponseCompression(opts =>
 {

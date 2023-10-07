@@ -151,3 +151,13 @@ main {
         padding-right: 1.5rem !important;
     }
 }
+
+.drawer-container {
+    width: 300px;
+}
+
+@media (max-width: 20em) { /* Change for the good breakpoint here */
+    .drawer-container {
+        width: 100%;
+    }
+}

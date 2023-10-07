@@ -1,5 +1,6 @@
 ﻿@using BlazorActorApp.Logging;
 @using BlazorActorApp.Components;
+@using Anchor = MudBlazor.Anchor;
 
 @inject DebugService DebugService;
 @inherits LayoutComponentBase
@@ -11,20 +12,31 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleLeft())" />
         NetCoreLabs
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.LogoDev" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleRight())" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
+    
+    <MudDrawer @bind-Open="@openLeft">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent>
-        @Body        
-        
+
+    <div class="drawer-container">
+    <MudDrawer @bind-Open="@openRight" Width="40%" Anchor="Anchor.Right">
+        <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Debug</MudText>
+        </MudDrawerHeader>
+
+        <input name="logtojavascriptconsole" type="checkbox" checked=@DebugService.ConnectToServerConsole @onchange="LogToJavascriptConsoleChanged" />
+        <label for="logtojavascriptconsole">Stream server logs to Javascript console</label>
+
         @if (DebugService.LogMessages.Count > 0)
         {
-            <h3>Server Console</h3>
-            <hr/>
-            
+            <hr />
+            <h3>Server Console</h3>            
+            <button style="float: right;" class="btn-sm btn-danger m-2" @onclick="DebugService.ClearLogMessages">Clear console</button>
+
             <div class="console">
                 @foreach (string s in DebugService.LogMessages)
                 {
@@ -33,18 +45,33 @@
             </div>
         }
 
-        @if (DebugService.ConnectToServerConsole) {
+        @if (DebugService.ConnectToServerConsole)
+        {
             <ServerConsole />
         }
 
+    </MudDrawer>
+    </div>
+
+
+    <MudMainContent>
+        @Body        
     </MudMainContent>
 </MudLayout>
 @code {
-    bool _drawerOpen = true;
 
-    void DrawerToggle()
+    bool openLeft = true;
+
+    bool openRight = false;    
+
+    void ToggleLeft()
     {
-        _drawerOpen = !_drawerOpen;
+        openLeft = !openLeft;
+    }
+
+    void ToggleRight()
+    {
+        openRight = !openRight;
     }
 
     public async Task OnChange()
@@ -64,5 +91,12 @@
     {
         DebugService.OnChange -= OnChange;
     }
+
+    private void LogToJavascriptConsoleChanged(ChangeEventArgs e)
+    {
+        DebugService.ToggleConnectToServerConsole();
+    }
+
+
 }
 
