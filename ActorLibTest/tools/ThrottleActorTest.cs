@@ -29,14 +29,8 @@ namespace ActorLibTest.tools
 
             int expectedCompletedMaxSecond = givenTestCount * givenLimitSeconds + 5;
 
-            // Create ThrottleLimit Actor
+            // Create ThrottleActor Actor
             throttleActor = actorSystem.ActorOf(Props.Create(() => new ThrottleActor(givenLimitSeconds)));
-
-            actorSystem
-               .Scheduler
-               .ScheduleTellRepeatedly(TimeSpan.FromSeconds(0),
-                         TimeSpan.FromSeconds(1),
-                         throttleActor, new Flush(), ActorRefs.NoSender);
 
             // Connect Throttle -> TestWorkActor(probe)
             var probe = this.CreateTestProbe();
