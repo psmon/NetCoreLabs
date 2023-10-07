@@ -6,7 +6,7 @@ using Akka.Streams.Dsl;
 
 namespace ActorLib.Actors.Tools
 {
-
+    // Stream Base Throttle
     public class ThrottleActor : ReceiveActor
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();

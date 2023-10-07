@@ -3,22 +3,27 @@ using Akka.Event;
 
 namespace ActorLib.Actors.Tools
 {
-    // Strem을 제어하는 부분은 AkkaStream이 활용된 ThrottleActor 버전을 추천
-
-    public class ThrottleLimitActor : ReceiveActor
+    // Timer Base Throttle
+    public class ThrottleTimerActor : ReceiveActor
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();
 
         private IActorRef? consumer;
 
-        private List<object> eventQueue = new List<object>();
+        private Queue<object> eventQueue = new Queue<object>();
 
         private DateTime lastExecuteDt;
 
 
-        public ThrottleLimitActor(int element, int second, int maxBust)
+        public ThrottleTimerActor(int element, int second, int maxBust)
         {
             lastExecuteDt = DateTime.Now;
+
+            Context.System
+               .Scheduler
+               .ScheduleTellRepeatedly(TimeSpan.FromSeconds(0),
+                         TimeSpan.FromSeconds(1),
+                         Self, new Flush(), ActorRefs.NoSender);
 
 #pragma warning disable CS1998
             ReceiveAsync<SetTarget>(async target =>
@@ -32,24 +37,19 @@ namespace ActorLib.Actors.Tools
                 {
                     logger.Warning($"ThrottleActor MaxBust : {eventQueue.Count}/{maxBust}");
                 }
-                eventQueue.Add(message);
+                
+                eventQueue.Enqueue(message);
+
             });
 
             ReceiveAsync<Flush>(async message =>
             {
-                TimeSpan timeSpan = DateTime.Now - lastExecuteDt;
-
-                if (eventQueue.Count > 0 && timeSpan.TotalMilliseconds > 1)
+                if (eventQueue.Count > 0)
                 {
-                    eventQueue.ForEach(obj =>
-                    {
-                        if (consumer != null)
-                            consumer.Tell(obj);
+                    var eventData = eventQueue.Dequeue();
 
-                        Task.Delay(TimeSpan.FromSeconds(second)).Wait();
-                    });
-
-                    eventQueue.Clear();
+                    if (consumer != null)
+                        consumer.Tell(eventData);
                     lastExecuteDt = DateTime.Now;
                 }
             });

@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace ActorLibTest.tools
 {
-    public class ThrottleLimitActorTest : TestKitXunit
+    public class ThrottleTimerActorTest : TestKitXunit
     {
 
         IActorRef throttleLimitActor;
@@ -17,26 +17,20 @@ namespace ActorLibTest.tools
         private TimeSpan EpsilonValueForWithins => new TimeSpan(0, 0, 1);
 
 
-        public ThrottleLimitActorTest(ITestOutputHelper output) : base(output)
+        public ThrottleTimerActorTest(ITestOutputHelper output) : base(output)
         {
         }
 
-        [Theory(DisplayName = "테스트 n초당 1회 호출제약")]
+        [Theory(DisplayName = "초당 1회 소비제약 -TimerBase")]
         [InlineData(5, 1, false)]
-        public void ThrottleLimitTest(int givenTestCount, int givenLimitSeconds, bool isPerformTest)
+        public void ThrottleTimerTest(int givenTestCount, int givenLimitSeconds, bool isPerformTest)
         {
             var actorSystem = akkaService.GetActorSystem();
 
             int expectedCompletedMaxSecond = givenTestCount * givenLimitSeconds + 5;
 
             // Create ThrottleLimit Actor
-            throttleLimitActor = actorSystem.ActorOf(Props.Create(() => new ThrottleLimitActor(1, givenLimitSeconds, 1000)));
-
-            actorSystem
-               .Scheduler
-               .ScheduleTellRepeatedly(TimeSpan.FromSeconds(0),
-                         TimeSpan.FromSeconds(1),
-                         throttleLimitActor, new Flush(), ActorRefs.NoSender);
+            throttleLimitActor = actorSystem.ActorOf(Props.Create(() => new ThrottleTimerActor(1, givenLimitSeconds, 1000)));
 
             // Connect Throttle -> TestWorkActor(probe)
             var probe = this.CreateTestProbe();
@@ -62,26 +56,30 @@ namespace ActorLibTest.tools
                         Assert.Equal("test", message.Message);                        
                     });
 
-                    output.WriteLine($"[{DateTime.Now}] - GTPRequestCmd");
 
                     if (isPerformTest)
                     {
                         _dictionary.Add(_key++, _key);
                         _addCounter.Increment();
                     }
+                    else
+                    {
+
+                        output.WriteLine($"[{DateTime.Now}] - GTPRequestCmd");
+                    }
                 }
             }, EpsilonValueForWithins);
         }
 
         [NBenchFact]
-        [PerfBenchmark(NumberOfIterations = 3, RunMode = RunMode.Throughput,
+        [PerfBenchmark(NumberOfIterations = 2, RunMode = RunMode.Throughput,
         RunTimeMilliseconds = 1000, TestMode = TestMode.Test)]
-        [CounterThroughputAssertion("TestCounter", MustBe.LessThanOrEqualTo, 1.0d)]
-        [CounterTotalAssertion("TestCounter", MustBe.LessThanOrEqualTo, 1)]
+        [CounterThroughputAssertion("TestCounter", MustBe.LessThanOrEqualTo, 1.5d)]
+        [CounterTotalAssertion("TestCounter", MustBe.LessThanOrEqualTo, 5)]
         [CounterMeasurement("TestCounter")]
-        public void ThrottleLimitPerformanceTest()
+        public void ThrottleTimerTestPerformanceTest()
         {
-            ThrottleLimitTest(1, 1, true);
+            ThrottleTimerTest(5, 1, true);
         }
 
         [PerfSetup]

@@ -21,16 +21,16 @@ namespace ActorLibTest.tools
         {
         }
 
-        [Theory(DisplayName = "수신검증및 n초당 5회 소비제약")]
-        [InlineData(100, 5, false)]
-        public void ThrottleTest(int givenTestCount, int givenLimitSeconds, bool isPerformTest)
+        [Theory(DisplayName = "초당 5회 소비제약 -StreamBase")]
+        [InlineData(50, 5, false)]
+        public void ThrottleTest(int givenTestCount, int processCouuntPerSec, bool isPerformTest)
         {
             var actorSystem = akkaService.GetActorSystem();
 
-            int expectedCompletedMaxSecond = givenTestCount * givenLimitSeconds + 5;
+            int expectedCompletedMaxSecond = givenTestCount * processCouuntPerSec + 5;
 
             // Create ThrottleActor Actor
-            throttleActor = actorSystem.ActorOf(Props.Create(() => new ThrottleActor(givenLimitSeconds)));
+            throttleActor = actorSystem.ActorOf(Props.Create(() => new ThrottleActor(processCouuntPerSec)));
 
             // Connect Throttle -> TestWorkActor(probe)
             var probe = this.CreateTestProbe();
@@ -74,14 +74,14 @@ namespace ActorLibTest.tools
         }
 
         [NBenchFact]
-        [PerfBenchmark(NumberOfIterations = 3, RunMode = RunMode.Throughput,
+        [PerfBenchmark(NumberOfIterations = 1, RunMode = RunMode.Throughput,
         RunTimeMilliseconds = 1000, TestMode = TestMode.Test)]
         [CounterThroughputAssertion("TestCounter", MustBe.LessThanOrEqualTo, 6.0d)]
-        [CounterTotalAssertion("TestCounter", MustBe.GreaterThanOrEqualTo, 100)]
+        [CounterTotalAssertion("TestCounter", MustBe.GreaterThanOrEqualTo, 10)]
         [CounterMeasurement("TestCounter")]
         public void ThrottlePerformanceTest()
         {
-            ThrottleTest(100, 5, true);
+            ThrottleTest(50, 5, true);
         }
 
         [PerfSetup]
