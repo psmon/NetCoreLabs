@@ -7,13 +7,31 @@ using Akka.Routing;
 
 using BlazorActorApp.Data;
 using BlazorActorApp.Data.Actor;
+using BlazorActorApp.Logging;
+
+using Microsoft.AspNetCore.ResponseCompression;
 
 using MudBlazor;
 using MudBlazor.Services;
 
+Logger.Configure();
+Logger.Log.Info("App starting");
+
+
+/* Lets log something every second to simulate legitimate log output
+System.Timers.Timer timer = new System.Timers.Timer(1000);
+timer.Elapsed += (source, e) =>
+{
+    Logger.Log.Info("tick");
+};
+timer.Enabled = true;
+timer.Start();
+*/
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
@@ -21,6 +39,14 @@ builder.Services.AddSingleton<AkkaService>();
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
+
+builder.Services.AddScoped<DebugService>();
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 
 var app = builder.Build();
 
@@ -62,10 +88,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
+app.MapHub<LoggingHub>("/hubs/logging");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

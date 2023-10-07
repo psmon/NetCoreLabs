@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorActorApp.Logging;
+@using BlazorActorApp.Components;
+
+@inject DebugService DebugService;
+@inherits LayoutComponentBase
+@implements IDisposable
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -13,7 +18,25 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        @Body
+        @Body        
+        
+        @if (DebugService.LogMessages.Count > 0)
+        {
+            <h3>Server Console</h3>
+            <hr/>
+            
+            <div class="console">
+                @foreach (string s in DebugService.LogMessages)
+                {
+                    <div>@s</div>
+                }
+            </div>
+        }
+
+        @if (DebugService.ConnectToServerConsole) {
+            <ServerConsole />
+        }
+
     </MudMainContent>
 </MudLayout>
 @code {
@@ -22,6 +45,24 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    public async Task OnChange()
+    {
+        await InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
+
+    protected override void OnInitialized()
+    {
+        DebugService.OnChange += OnChange;
+    }
+
+    public void Dispose()
+    {
+        DebugService.OnChange -= OnChange;
     }
 }
 
