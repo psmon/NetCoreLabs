@@ -8,22 +8,18 @@
 
 <PageTitle>random</PageTitle>
 
-<h1>random router actor</h1>
+<MudCard>
+    <MudCardContent>
+        <MudText>random router actor</MudText>
+        <MudText Typo="Typo.body2">메시지를 랜덤분배 처리합니다.</MudText>
+    </MudCardContent>
+</MudCard>
 
-<p role="status">Current count: @currentCount</p>
+<MudNumericField @bind-Value="amount" Label="Count" Variant="Variant.Text" Min="1" Max="1000" />
 
-<button class="btn btn-primary" @onclick="IncrementCount">Add WorkActor</button>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCount">Add WorkActor</MudButton>
 
-
-<p></p>
-
-<div class="mb-3">
-    <label class="form-label">전송횟수</label>
-    <NumberInput TValue="int" @bind-Value="@amount" Placeholder="Enter Message Count" />
-</div>
-<div class="mb-3">@amount 개의메시지가 전송됩니다.</div>
-
-<button class="btn btn-primary" @onclick="SendHello">Send Hello</button>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendHello">Send Hello</MudButton>
 
 <div class="diagram-container">    
     <CascadingValue Value="Diagram" IsFixed="true">

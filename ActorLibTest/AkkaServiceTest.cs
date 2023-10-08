@@ -27,8 +27,8 @@ namespace ActorLibTest
 
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
             {
-                basicActor.Tell("메시지전송");
-                ExpectMsg("ok");
+                basicActor.Tell("hello");
+                ExpectMsg("world");
             });
 
         }

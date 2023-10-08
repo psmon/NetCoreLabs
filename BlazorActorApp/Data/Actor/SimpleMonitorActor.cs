@@ -36,6 +36,8 @@ namespace BlazorActorApp.Data.Actor
             {
                 string actorName = Sender.Path.Name;
 
+                logger.Info($"ReceiveData {msg.Title} -From:{actorName}");
+
                 if (!MessageCounts.ContainsKey(actorName))
                 {
                     MessageCounts[actorName] = 1;
@@ -51,7 +53,7 @@ namespace BlazorActorApp.Data.Actor
             {
                 string actorName = Sender.Path.Name;
 
-                logger.Info($"SenderPath:{actorName}");
+                logger.Info($"ReceiveData {msg} -From:{actorName}");
 
                 if (msg == "done")
                 {

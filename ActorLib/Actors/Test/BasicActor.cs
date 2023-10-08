@@ -31,8 +31,6 @@ namespace ActorLib.Actors.Test
                 }
             });
 
-
-
             ReceiveAsync<string>(async msg =>
             {                
                 if (msg.Contains("slowCommand"))

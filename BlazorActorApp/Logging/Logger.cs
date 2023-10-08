@@ -11,7 +11,7 @@ namespace BlazorActorApp.Logging
         public static void Configure()
         {
             LoggingConfiguration config = new LoggingConfiguration();
-            string layout = "[${longdate}] [${message}] [TID:${threadid}]";
+            string layout = "[${longdate}] [${message}] [ThreadId:${threadid}]";
 
             // Log to console
             ColoredConsoleTarget consoleTarget = new ColoredConsoleTarget()
