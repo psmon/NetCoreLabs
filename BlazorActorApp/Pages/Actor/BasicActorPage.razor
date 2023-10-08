@@ -1,0 +1,97 @@
+﻿@page "/actor/basic"
+@using ActorLib.Actors.Test;
+@using Akka.Actor;
+@using Akka.Routing;
+@using BlazorActorApp.Components;
+@using BlazorActorApp.Data.Actor;
+@using BlazorActorApp.Logging;
+
+@inject DebugService DebugService;
+
+<PageTitle>actor</PageTitle>
+
+<MudCard>
+    <MudCardContent>
+        <MudText>actor</MudText>
+        <MudText Typo="Typo.body2">기본 액터를 생성하고 메시지를 전송합니다.</MudText>
+    </MudCardContent>    
+</MudCard>
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="actorName" Label="ActorName" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateActor">Create Actor</MudButton>
+    </MudItem>
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="message" Label="Message" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessage">Send Message</MudButton>
+    </MudItem>
+</MudGrid>
+
+
+<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudMarkdown Value="@Value" />
+
+
+@code {
+
+    private string actorName { get; set; }
+
+    private string message { get; set; }
+
+    private ActorSystem ActorSystem { get; set; }
+
+    private IActorRef MonitorActor { get; set; }
+
+    private IActorRef currentActor { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Actor
+        ActorSystem = AkkaService.GetActorSystem(); 
+        MonitorActor = AkkaService.GetActor("defaultMonitor");
+    }
+
+    private void CreateActor()
+    {
+        DebugService.AddLogMessage($"Create Actor : {actorName}");
+        currentActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), actorName);
+        currentActor.Tell(MonitorActor);
+    }
+
+    private void SendMessage()
+    {
+        if (currentActor != null)
+        {
+            currentActor.Tell(new MessageCommand(message));
+        }
+    }
+}
+
+@code
+{
+    private string Value { get; } =
+    @"
+```
+// Create ActorSystem
+var actorSystem = akkaService.CreateActorSystem();
+
+// Create Actor
+var currentActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), actorName);
+
+// Send Message
+currentActor.Tell(new MessageCommand(""Hello""));
+
+```
+";
+
+
+}

@@ -30,7 +30,6 @@ namespace ActorLib.Actors.Test
                     testProbe.Tell(msg);
                 }
             });
-
             
             ReceiveAsync<DelayCommand>(async msg =>
             {
@@ -58,6 +57,18 @@ namespace ActorLib.Actors.Test
                     Sender.Tell("world");
                 }
             });
+
+            ReceiveAsync<MessageCommand>(async msg =>
+            {
+                if (testProbe != null)
+                {
+                    testProbe.Tell(msg.Message);
+                }
+                else
+                {
+                    Sender.Tell(msg.Message);
+                }
+            });            
         }
     }
 }

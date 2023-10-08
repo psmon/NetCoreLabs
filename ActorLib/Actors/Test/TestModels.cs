@@ -10,6 +10,16 @@
             Delay = delay;
             Message = message;
         }
-
     }
+
+    public class MessageCommand
+    {
+        public string Message { get; set; }
+
+        public MessageCommand(string message) 
+        { 
+            Message = message;
+        }
+    }
+
 }

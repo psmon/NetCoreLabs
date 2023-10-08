@@ -57,6 +57,9 @@ var akkaService = app.Services.GetRequiredService<AkkaService>();
 // Create ActorSystem
 var actorSystem = akkaService.CreateActorSystem("BlazorActorSystem");
 
+var defaultMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
+akkaService.AddActor("defaultMonitor", defaultMonitor);
+
 // Create RoundRobin Router
 var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)), "roundrobin");
 akkaService.AddActor("roundrobin", roundrobin);
