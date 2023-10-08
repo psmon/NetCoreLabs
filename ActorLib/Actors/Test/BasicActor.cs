@@ -57,7 +57,7 @@ namespace ActorLib.Actors.Test
                     Sender.Tell("world");
                 }
             });
-
+            
             ReceiveAsync<MessageCommand>(async msg =>
             {
                 if (testProbe != null)
@@ -68,7 +68,12 @@ namespace ActorLib.Actors.Test
                 {
                     Sender.Tell(msg.Message);
                 }
-            });            
+            });
+
+            ReceiveAsync<RemoteCommand>(async msg =>
+            {
+                logger.Info($"ReceiveRemoteCommand:{msg.Message} Path:{Self.Path}");
+            });
         }
     }
 }

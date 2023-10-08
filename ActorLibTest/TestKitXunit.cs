@@ -61,7 +61,7 @@ namespace ActorLibTest
             // 여기서는 생성된 ActorSystem을 이용합니다.           
             // 시스템생성코드 : akkaService.CreateActorSystem("test");
 
-            akkaService.FromActorSystem(this.Sys);
+            akkaService.SetDeafaultSystem(this.Sys);
 
             logger = this.Sys.Log;
 

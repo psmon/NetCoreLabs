@@ -55,10 +55,16 @@ var app = builder.Build();
 var akkaService = app.Services.GetRequiredService<AkkaService>();
 
 // Create ActorSystem
-var actorSystem = akkaService.CreateActorSystem("BlazorActorSystem");
+// akka.tcp://default@localhost:9000
+var actorSystem = akkaService.CreateActorSystem("default", 9000);
 
 var defaultMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("defaultMonitor", defaultMonitor);
+
+// Create ActorSystem Onmore for Remote Test
+// akka.tcp://default2@localhost:9001
+var actorSystem2 = akkaService.CreateActorSystem("default2", 9001);
+
 
 // Create RoundRobin Router
 var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)), "roundrobin");

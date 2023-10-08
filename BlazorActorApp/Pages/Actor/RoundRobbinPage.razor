@@ -218,7 +218,7 @@ var actorSystem = akkaService.CreateActorSystem();
 var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)));
 
 // Create Worker and Add Routee
-var workActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
+var workActor = actorSystem.ActorOf(Props.Create<BasicActor>(), NodeName);
 var routee = Routee.FromActorRef(workActor);
 roundrobin.Tell(new AddRoutee(routee));
 

@@ -22,4 +22,14 @@
         }
     }
 
+    public class RemoteCommand
+    {
+        public string Message { get; set; }
+
+        public RemoteCommand(string message)
+        {
+            Message = message;
+        }
+    }
+
 }

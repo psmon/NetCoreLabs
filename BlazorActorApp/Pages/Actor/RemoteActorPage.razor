@@ -1,0 +1,120 @@
+﻿@page "/actor/remote"
+@using ActorLib.Actors.Test;
+@using Akka.Actor;
+@using Akka.Routing;
+@using BlazorActorApp.Components;
+@using BlazorActorApp.Data.Actor;
+@using BlazorActorApp.Logging;
+
+@inject DebugService DebugService;
+
+<PageTitle>remote actor</PageTitle>
+
+<MudCard>
+    <MudCardContent>
+        <MudText>remote actor</MudText>
+        <MudText Typo="Typo.body2">원격지에 액터를 구성하고, 서버간 실시간 액터푸시 메시지를 전송합니다.</MudText>
+    </MudCardContent>    
+</MudCard>
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="message" Label="Message" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Class="py-4 d-flex flex-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessageAtoB">Send Message, A TO B</MudButton>
+    </MudItem>
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="message2" Label="Message" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Class="py-4 d-flex flex-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="SendMessageBtoA">Send Message, B TO A</MudButton>
+    </MudItem>
+</MudGrid>
+
+
+<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudMarkdown Value="@Value" />
+
+
+@code {
+
+    private string message { get; set; }
+
+    private string message2 { get; set; }
+
+    private ActorSystem ActorSystemA { get; set; }
+
+    private ActorSystem ActorSystemB { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Actor
+        ActorSystemA = AkkaService.GetActorSystem("default");
+
+        ActorSystemB = AkkaService.GetActorSystem("default2");
+
+        CreateActor();
+
+    }
+
+    private void CreateActor()
+    {
+        ActorSystemA.ActorOf(Props.Create<BasicActor>(), "someActor");
+        ActorSystemB.ActorOf(Props.Create<BasicActor>(), "someActor");
+    }
+
+    private void SendMessageAtoB()
+    {        
+        var remoteActor = ActorSystemA.ActorSelection("akka.tcp://default2@127.0.0.1:9001/user/someActor");
+        remoteActor.Tell(new RemoteCommand(message));
+    }
+
+    private void SendMessageBtoA()
+    {
+        var remoteActor = ActorSystemB.ActorSelection("akka.tcp://default@127.0.0.1:9000/user/someActor");
+        remoteActor.Tell(new RemoteCommand(message));
+    }
+}
+
+@code
+{
+    private string Value { get; } =
+    @"
+```
+
+// Create Actor
+ActorSystemA.ActorOf(Props.Create<BasicActor>(), ""someActor"");
+ActorSystemB.ActorOf(Props.Create<BasicActor>(), ""someActor"");
+
+
+// Send Message A to B
+var remoteActor = ActorSystemA.ActorSelection(""akka.tcp://default2@127.0.0.1:9001/user/someActor"");
+remoteActor.Tell(new RemoteCommand(message));
+
+
+// Send Message B to A
+var remoteActor = ActorSystemB.ActorSelection(""akka.tcp://default@127.0.0.1:9001/user/someActor"");
+remoteActor.Tell(new RemoteCommand(message));
+
+
+// Config for Remote
+
+akka {    
+	actor {
+        provider = remote
+	}
+    remote {
+        dot-netty.tcp {
+            port = 9000
+            hostname = ""127.0.0.1""
+    }
+}
+```
+";
+
+
+}
