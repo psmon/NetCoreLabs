@@ -31,28 +31,32 @@ namespace ActorLib.Actors.Test
                 }
             });
 
-            ReceiveAsync<string>(async msg =>
-            {                
-                if (msg.Contains("slowCommand"))
-                {                                        
-                    await Task.Delay(10);
-                    
-                    if (testProbe != null)
-                    {
-                        testProbe.Tell(msg);
-                    }
+            
+            ReceiveAsync<DelayCommand>(async msg =>
+            {
+                await Task.Delay(msg.Delay);
+
+                if (testProbe != null)
+                {
+                    testProbe.Tell("world");
                 }
                 else
-                {                    
-                    if (testProbe != null)
-                    {
-                        testProbe.Tell("world");
-                    }
-                    else
-                    {
-                        Sender.Tell("world");
-                    }
-                }                                
+                {
+                    Sender.Tell("world");
+                }
+
+            });
+
+            ReceiveAsync<string>(async msg =>
+            {
+                if (testProbe != null)
+                {
+                    testProbe.Tell("world");
+                }
+                else
+                {
+                    Sender.Tell("world");
+                }
             });
         }
     }

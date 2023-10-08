@@ -50,7 +50,7 @@ namespace ActorLibTest.Intro
             {
                 for (int i = 0; i < givenTestCount; i++)
                 {
-                    actor.Tell("slowCommand" +  i);
+                    actor.Tell( new DelayCommand("slowCommand" + i, 10));
                 }
 
                 for (int i = 0; i < givenTestCount; i++)
