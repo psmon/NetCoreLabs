@@ -56,15 +56,6 @@
         ActorSystemA = AkkaService.GetActorSystem("default");
 
         ActorSystemB = AkkaService.GetActorSystem("default2");
-
-        CreateActor();
-
-    }
-
-    private void CreateActor()
-    {
-        ActorSystemA.ActorOf(Props.Create<BasicActor>(), "someActor");
-        ActorSystemB.ActorOf(Props.Create<BasicActor>(), "someActor");
     }
 
     private void SendMessageAtoB()

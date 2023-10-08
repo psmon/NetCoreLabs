@@ -65,6 +65,10 @@ akkaService.AddActor("defaultMonitor", defaultMonitor);
 // akka.tcp://default2@localhost:9001
 var actorSystem2 = akkaService.CreateActorSystem("default2", 9001);
 
+// Fot Remote Test
+actorSystem.ActorOf(Props.Create<BasicActor>(), "someActor");
+actorSystem2.ActorOf(Props.Create<BasicActor>(), "someActor");
+
 
 // Create RoundRobin Router
 var roundrobin = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RoundRobinPool(0)), "roundrobin");
