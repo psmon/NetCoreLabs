@@ -67,7 +67,7 @@
     private void SendMessageBtoA()
     {
         var remoteActor = ActorSystemB.ActorSelection("akka.tcp://default@127.0.0.1:9000/user/someActor");
-        remoteActor.Tell(new RemoteCommand(message));
+        remoteActor.Tell(new RemoteCommand(message2));
     }
 }
 
