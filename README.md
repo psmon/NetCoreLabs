@@ -98,6 +98,29 @@ public void ThrottleLimitPerformanceTest()
 Blazor를 통해 액터모델이 웹과 연계되어 작동되는 샘플들을 만드는 프로젝트입니다.
 액터모델을 동적으로 생성할수 있는 노코딩으로 구성가능한 액터시각화 활동도 포함되어 있습니다.
 
+### DockerBuild
+
+```
+docker build -f BlazorActorApp/Dockerfile -t registry.webnori.com/blazor-actor:dev .
+
+docker push registry.webnori.com/blazor-actor:dev
+
+
+version: '2'
+services:
+  blazoractor:
+    image: registry.webnori.com/blazor-actor:dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+    - 5000:80/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: server_name=main
+      io.rancher.container.hostname_override: container_name
+
+
+```
+
 
 ### 
 ![dispacher](Doc/router-roundrobin.png)

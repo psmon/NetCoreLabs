@@ -38,7 +38,7 @@ namespace BlazorActorApp.Logging
             config.AddRule(minLevel: NLog.LogLevel.Trace, maxLevel: NLog.LogLevel.Fatal, target: traceFileTarget);
 
             // Log to SignalR LoggingHub
-            var loggingHubTarget = new LoggingHubTarget("http://localhost:5225/hubs/logging")
+            var loggingHubTarget = new LoggingHubTarget("http://code.webnori.com/hubs/logging")
             {
                 Layout = layout
             };
