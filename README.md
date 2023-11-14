@@ -4,11 +4,13 @@ NetCore기술을 활용하여 Reactive Stream이라는 주제를 주로 다루�
 
 다음과 같이 구성되어 있습니다.
 
-
 ## ActorLib
 
 akka.net(https://getakka.net/)을 이용하여 유용한 액터모델샘플을 지속 발굴하는 학습 프로젝트입니다.
+
 akka가 아니여도 주변기술을 이해하고 스트림으로 처리하는 메시지패턴을 연구하는것에 더 가치를 두고 있습니다.
+
+분산처리를 다루는 개발자가 AKKA를 학습하면 도움되는 이유 : https://wiki.webnori.com/pages/viewpage.action?pageId=94240770
 
 
 ### 기본액터
@@ -120,8 +122,6 @@ services:
 
 
 ```
-
-
 ### 
 ![dispacher](Doc/router-roundrobin.png)
 
