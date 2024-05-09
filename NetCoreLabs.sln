@@ -17,6 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorActorApp", "BlazorAct
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루션 항목", "{E13FF6D7-25D5-4C6C-B5F5-BD6CB5D105FA}"
 	ProjectSection(SolutionItems) = preProject
+		BlazorActorApp\Dockerfile = BlazorActorApp\Dockerfile
 		README.md = README.md
 	EndProjectSection
 EndProject
