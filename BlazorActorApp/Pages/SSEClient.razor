@@ -6,13 +6,13 @@
 @using BlazorActorApp.Data.SSE;
 @using BlazorActorApp.Logging;
 
-
 <PageTitle>SSEClient</PageTitle>
+
+<MudAlert Severity="Severity.Info">SSE(ServrSideEvent)를 이용한 경량화된 단방향 리얼타임 메시지 발송테스트 페이지입니다.</MudAlert>
 
 <MudTextField @bind-Value="_username" Label="Nick"  Variant="Variant.Text" Lines="1"></MudTextField>
 
 <MudButton @onclick="OnStart" Variant="Variant.Filled" Color="Color.Primary">SSE Start</MudButton>
-
 
 
 <MudTextField @bind-Value="_username_target" Label="Nick(Target)" Variant="Variant.Text" Lines="1"></MudTextField>

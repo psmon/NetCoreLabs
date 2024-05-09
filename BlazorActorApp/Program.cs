@@ -41,11 +41,6 @@ builder.Services.AddBlazorBootstrap();
 builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
 
-builder.Services.AddSingleton<INotificationRepository,NotificationRepository>();
-builder.Services.AddSingleton<ICustomMessageQueue, CustomMessageQueue>();
-
-builder.Services.AddHostedService<CustomHostedService>();
-
 builder.Services.AddScoped<DebugService>();
 builder.Services.AddScoped<JsConsole>();
 
@@ -117,7 +112,5 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<LoggingHub>("/hubs/logging");
     endpoints.MapFallbackToPage("/_Host");
 });
-
-
 
 app.Run();
