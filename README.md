@@ -106,6 +106,9 @@ docker build -f BlazorActorApp/Dockerfile -t registry.webnori.com/blazor-actor:d
 docker push registry.webnori.com/blazor-actor:dev
 
 
+### SSE
+- https://www.codemag.com/Article/2309051/Developing-Real-Time-Web-Applications-with-Server-Sent-Events-in-ASP.NET-7-Core
+
 version: '2'
 services:
   blazoractor:

@@ -7,6 +7,7 @@ using Akka.Routing;
 
 using BlazorActorApp.Data;
 using BlazorActorApp.Data.Actor;
+using BlazorActorApp.Data.SSE;
 using BlazorActorApp.Logging;
 
 using Microsoft.AspNetCore.ResponseCompression;
@@ -39,6 +40,11 @@ builder.Services.AddSingleton<AkkaService>();
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
+
+builder.Services.AddSingleton<INotificationRepository,NotificationRepository>();
+builder.Services.AddSingleton<ICustomMessageQueue, CustomMessageQueue>();
+
+builder.Services.AddHostedService<CustomHostedService>();
 
 builder.Services.AddScoped<DebugService>();
 builder.Services.AddScoped<JsConsole>();
@@ -103,8 +109,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-app.MapBlazorHub();
-app.MapHub<LoggingHub>("/hubs/logging");
-app.MapFallbackToPage("/_Host");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapBlazorHub();
+    endpoints.MapHub<LoggingHub>("/hubs/logging");
+    endpoints.MapFallbackToPage("/_Host");
+});
+
+
 
 app.Run();

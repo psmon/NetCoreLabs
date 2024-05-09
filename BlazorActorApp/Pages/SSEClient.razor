@@ -1,0 +1,24 @@
+﻿@page "/sse/client"
+@inject IJSRuntime JS
+
+@using BlazorActorApp.Components;
+@using BlazorActorApp.Logging;
+
+<PageTitle>SSEClient</PageTitle>
+
+
+<ul id="sse">
+</ul>
+
+@code {
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("display");            
+        }
+    }
+ 
+    
+}

@@ -31,7 +31,16 @@
             .Build();
 
         _hubConnection.On<string>("Log", OnReceiveLogMessage);
-        await _hubConnection.StartAsync();
+
+        try
+        {
+            await _hubConnection.StartAsync();            
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);            
+        }
+        
     }
 
     public void Dispose()
