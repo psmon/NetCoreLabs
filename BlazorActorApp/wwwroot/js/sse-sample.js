@@ -1,15 +1,18 @@
-﻿function display() {
-    var source = new EventSource('/api/sse/message');
+﻿function display(id) {
+    var source = new EventSource('/api/sse/message/' + id);
 
-    //var source = new EventSource('/api/sse/subscribe/a');
-
-    //subscribe
     var ul = document.getElementById("sse");
     source.onmessage = function (e) {
         var li = document.createElement("li");
-        var retrievedData = JSON.parse(e.data)
-        li.textContent = retrievedData.message;
-        ul.appendChild(li);
+        if (!!e.data) {
+            var retrievedData = JSON.parse(e.data)
+            li.textContent = retrievedData.Message;
+            ul.appendChild(li);
+
+            console.log(retrievedData.Message);
+
+        }
+        
     }
 }
 

@@ -9,6 +9,14 @@
         public bool IsProcessed { get; set; }
     }
 
+    public class CheckNotification
+    {
+    }
+
+    public class EmptyNotification
+    {
+    }
+
     public interface INotificationRepository
     {
         public Task<List<Notification>> GetNotifications();

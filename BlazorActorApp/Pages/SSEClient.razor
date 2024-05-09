@@ -1,24 +1,73 @@
 ﻿@page "/sse/client"
 @inject IJSRuntime JS
 
+@using Akka.Actor;
 @using BlazorActorApp.Components;
+@using BlazorActorApp.Data.SSE;
 @using BlazorActorApp.Logging;
+
 
 <PageTitle>SSEClient</PageTitle>
 
+<MudTextField @bind-Value="_username" Label="Nick"  Variant="Variant.Text" Lines="1"></MudTextField>
+
+<MudButton @onclick="OnStart" Variant="Variant.Filled" Color="Color.Primary">SSE Start</MudButton>
+
+
+
+<MudTextField @bind-Value="_username_target" Label="Nick(Target)" Variant="Variant.Text" Lines="1"></MudTextField>
+
+<MudTextField @bind-Value="message" Label="Message" Variant="Variant.Text" Lines="1"></MudTextField>
+
+<MudButton @onclick="OnSend" Variant="Variant.Filled" Color="Color.Primary">Send</MudButton>
+
+
+<p></p>
+
+<p></p>
+
+<p></p>
 
 <ul id="sse">
 </ul>
 
 @code {
 
+    private string _username;
+
+    private string _username_target;
+
+    private string message;
+
+    private ActorSystem ActorSystem { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Actor
+        ActorSystem = AkkaService.GetActorSystem();
+    }
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-        {
-            await JS.InvokeVoidAsync("display");            
+        {            
         }
     }
- 
-    
+
+    protected async Task OnStart()
+    {
+        await JS.InvokeVoidAsync("display", _username);
+    }
+
+    protected async Task OnSend()
+    {
+        string actorName = $"{_username_target}-Actor";
+        var userActor = AkkaService.GetActor(actorName);
+        userActor.Tell(new Notification()
+        {
+            Id = _username_target,
+            Message = message,
+            MessageTime = DateTime.Now
+        });
+    }
 }

@@ -94,8 +94,15 @@ namespace ActorLib
             }
         }
         public IActorRef GetActor(string name) 
-        { 
-            return actors[name];
+        {
+            if (actors.ContainsKey(name))
+            {
+                return actors[name];
+            }
+            else
+            {
+                return null;
+            }            
         }
     }
 }

@@ -2,7 +2,14 @@
 using System.Text;
 using System.Text.Json;
 
+using ActorLib;
+
+using Akka.Actor;
+using Akka.Streams.Implementation.Fusing;
+
+using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
+using BlazorActorApp.Logging;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,15 +22,18 @@ namespace BlazorActorApp.Controllers
 
         private readonly ICustomMessageQueue _messageQueue;
 
-        public SSEController(ICustomMessageQueue messageQueue)
+        private AkkaService AkkaService { get; set; }
+
+        
+        public SSEController(ICustomMessageQueue messageQueue, AkkaService actorSystem )
         {
+            AkkaService = actorSystem;        
+
             for (int i = 0; i < 10; i++)
             {
-                _producerConsumerCollection.Add(string.Format("The product code is: {0}\n", Guid.NewGuid().ToString()));
+                //_producerConsumerCollection.Add(string.Format("The product code is: {0}\n", Guid.NewGuid().ToString()));
             }
-
             _messageQueue = messageQueue;
-
         }
         public ActionResult Index()
         {
@@ -34,21 +44,72 @@ namespace BlazorActorApp.Controllers
             return View();
         }
 
-        [HttpGet("message")]
-        public ActionResult GetMessage()
-        {
-            var result = string.Empty;
+        [HttpGet("message/{identy}")]
+        public async Task<ActionResult> GetMessageByActor(string identy)
+        {            
             var stringBuilder = new StringBuilder();
 
-            if (_producerConsumerCollection.TryTake(out result,
-              TimeSpan.FromMilliseconds(1000)))
+            string actorName = $"{identy}-Actor";
+
+            IActorRef myActor = AkkaService.GetActor(actorName);
+            if (myActor == null)
             {
-                var serializedData = JsonSerializer.Serialize(
-                  new { message = result });
-                stringBuilder.AppendFormat("data: {0}\n\n", serializedData);
+                myActor = AkkaService.GetActorSystem().ActorOf(Props.Create<UserActor>());
+                AkkaService.AddActor(actorName, myActor);
+
+                myActor.Tell(new Notification()
+                {
+                    Id = identy,
+                    MessageTime = DateTime.Now,
+                    Message = "웰컴메시지.. sent by sse",
+                    IsProcessed = false
+                });
             }
 
-            return Content(stringBuilder.ToString(), "text/event-stream");
+            object message = await myActor.Ask(new CheckNotification(), TimeSpan.FromSeconds(3));            
+
+            if (message is Notification)
+            {
+                var serializedData = JsonSerializer.Serialize(message as Notification);
+                stringBuilder.AppendFormat("data: {0}\n\n", serializedData);
+                return Content(stringBuilder.ToString(), "text/event-stream");
+            }
+            else if (message is EmptyNotification)
+            {
+                var serializedData = JsonSerializer.Serialize(new EmptyNotification());
+                stringBuilder.AppendFormat("data: null", serializedData);
+                return Content(stringBuilder.ToString(), "text/event-stream");
+            }
+            else
+            {
+                var typeName = message.GetType().Name;
+                int x = 99;
+                stringBuilder.AppendFormat("data: null \n\n");
+                return Content(stringBuilder.ToString(), "text/event-stream");
+            }
+        }
+
+        [HttpGet("noti-test/{identy}")]
+        public async Task<IActionResult> notificationTest(string identy)
+        {
+            try
+            {
+                string actorName = $"{identy}-Actor";
+
+                IActorRef myActor = AkkaService.GetActor(actorName);
+                myActor.Tell(new Notification()
+                {
+                    Id = identy,
+                    IsProcessed = false,
+                    Message = "SSE TEST 메시지",
+                    MessageTime = DateTime.Now,                    
+                });
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("subscribe/{id}")]
@@ -165,29 +226,7 @@ namespace BlazorActorApp.Controllers
             }
         }
 
-        [HttpGet("noti-test")]
-        public async Task<IActionResult> notificationTest()
-        {
-            try
-            {
-                Notification notification = new Notification()
-                {
-                    Id = "a",
-                    IsProcessed = true,
-                    Message = "test",
-                    MessageTime = DateTime.Now,                    
-                };
 
-                _messageQueue.Register(notification.Id);
-                await _messageQueue.EnqueueAsync(notification,
-                  HttpContext.RequestAborted);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
     }
 }
