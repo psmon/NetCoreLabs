@@ -8,20 +8,31 @@
 
 <PageTitle>SSEClient</PageTitle>
 
-<MudAlert Severity="Severity.Info">SSE(ServrSideEvent)를 이용한 경량화된 단방향 리얼타임 메시지 발송테스트 페이지입니다.</MudAlert>
+<MudAlert Severity="Severity.Normal">SSE(ServrSideEvent)를 이용한 경량화된 단방향 리얼타임 메시지 발송테스트 페이지입니다. </MudAlert>
 
-<MudTextField @bind-Value="_username" Label="Nick"  Variant="Variant.Text" Lines="1"></MudTextField>
+
+<MudAlert Severity="Severity.Info">식별값을 입력해 단방향 클라이언트를 시작합니다. </MudAlert>
+
+<MudTextField @bind-Value="_username" Label="고객식별값"  Variant="Variant.Text" Lines="1"></MudTextField>
 
 <MudButton @onclick="OnStart" Variant="Variant.Filled" Color="Color.Primary">SSE Start</MudButton>
 
 
-<MudTextField @bind-Value="_username_target" Label="Nick(Target)" Variant="Variant.Text" Lines="1"></MudTextField>
+<MudAlert Severity="Severity.Info">고객식별값 단위로 단방향 전송합니다.  Pub/Sub 액터모델이 이용되었으며, PubSub을 지원하는 다양한 장치를 활용할수 있으며 이 발송모듈은 분리될수 있습니다.  </MudAlert>
+
+<MudTextField @bind-Value="_username_target" Label="고객식별값" Variant="Variant.Text" Lines="1"></MudTextField>
 
 <MudTextField @bind-Value="message" Label="Message" Variant="Variant.Text" Lines="1"></MudTextField>
 
 <MudButton @onclick="OnSend" Variant="Variant.Filled" Color="Color.Primary">Send</MudButton>
 
 
+<MudAlert Severity="Severity.Info">웹소켓 구현대비 재접속에 따른 세션유지/핸드쉐이크(오보헤드) 처리등을 할 필요없이, 짧고 경량하된 코드를 프론트에 탑재가가능합니다.  </MudAlert>
+<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudMarkdown Value="@Value" />
+
+
+<MudAlert Severity="Severity.Info">수신받은 이벤트가 표시됩니다. </MudAlert>
 <p></p>
 
 <p></p>
@@ -70,4 +81,25 @@
             MessageTime = DateTime.Now
         });
     }
+
+    private string Value { get; } =
+@"
+```
+function display(id) {
+    var source = new EventSource('/api/sse/message/' + id);
+
+    var ul = document.getElementById('sse');
+    source.onmessage = function (e) {
+        var li = document.createElement('li');
+        if (!!e.data) {
+            var retrievedData = JSON.parse(e.data)
+            li.textContent = retrievedData.Message;
+            ul.appendChild(li);
+            console.log(retrievedData.Message);
+        }        
+    }
+}
+```
+";
+
 }
