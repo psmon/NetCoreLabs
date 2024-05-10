@@ -3,13 +3,15 @@
 
 @using Akka.Actor;
 @using BlazorActorApp.Components;
+@using BlazorActorApp.Data.Actor;
 @using BlazorActorApp.Data.SSE;
 @using BlazorActorApp.Logging;
 
 <PageTitle>SSEClient</PageTitle>
 
 <MudAlert Severity="Severity.Normal">SSE(ServrSideEvent)를 이용한 경량화된 단방향 리얼타임 메시지 발송테스트 페이지입니다. </MudAlert>
-
+<hr>
+<MudText Typo="Typo.h5">SSE Client</MudText>
 
 <MudAlert Severity="Severity.Info">식별값을 입력해 단방향 클라이언트를 시작합니다. </MudAlert>
 
@@ -17,8 +19,14 @@
 
 <MudButton @onclick="OnStart" Variant="Variant.Filled" Color="Color.Primary">SSE Start</MudButton>
 
+<MudAlert Severity="Severity.Info">수신받은 이벤트가 표시됩니다. </MudAlert>
+<ul id="sse">
+</ul>
 
-<MudAlert Severity="Severity.Info">고객식별값 단위로 단방향 전송합니다.  Pub/Sub 액터모델이 이용되었으며, PubSub을 지원하는 다양한 장치를 활용할수 있으며 이 발송모듈은 분리될수 있습니다.  </MudAlert>
+<hr>
+<MudText Typo="Typo.h5">전송서버</MudText>
+
+<MudAlert Severity="Severity.Info">고객식별값 단위로 단방향 전송합니다.  Pub/Sub 액터모델이 이용되었으며 이 발송모듈은 분리될수 있습니다.</MudAlert>
 
 <MudTextField @bind-Value="_username_target" Label="고객식별값" Variant="Variant.Text" Lines="1"></MudTextField>
 
@@ -26,21 +34,16 @@
 
 <MudButton @onclick="OnSend" Variant="Variant.Filled" Color="Color.Primary">Send</MudButton>
 
+<hr>
 
 <MudAlert Severity="Severity.Info">웹소켓 구현대비 재접속에 따른 세션유지/핸드쉐이크(오보헤드) 처리등을 할 필요없이, 짧고 경량하된 코드를 프론트에 탑재가가능합니다.  </MudAlert>
-<MudText Typo="Typo.h5">SampleCode</MudText>
-<MudMarkdown Value="@Value" />
+<MudAlert Severity="Severity.Info">서버코드의 경우 개인별 메일박스를 가지고 있으며, 오프라인시 다음 접속시 수신보장이됩니다. DB를 사용하지않고 분산처리도 가능한 라이트한 액터 인메모리를 이용합니다. </MudAlert>
+<MudText Typo="Typo.h5">FrontSample</MudText>
+<MudMarkdown Value="@FrontCode" />
 
+<MudText Typo="Typo.h5">ActorModel</MudText>
+<MudMarkdown Value="@ServcerCode" />
 
-<MudAlert Severity="Severity.Info">수신받은 이벤트가 표시됩니다. </MudAlert>
-<p></p>
-
-<p></p>
-
-<p></p>
-
-<ul id="sse">
-</ul>
 
 @code {
 
@@ -74,6 +77,13 @@
     {
         string actorName = $"{_username_target}-Actor";
         var userActor = AkkaService.GetActor(actorName);
+
+        if (userActor == null)
+        {
+            userActor = AkkaService.GetActorSystem().ActorOf(Props.Create<UserActor>());
+            AkkaService.AddActor(actorName, userActor);
+        }
+
         userActor.Tell(new Notification()
         {
             Id = _username_target,
@@ -82,7 +92,7 @@
         });
     }
 
-    private string Value { get; } =
+    private string FrontCode { get; } =
 @"
 ```
 function display(id) {
@@ -97,6 +107,38 @@ function display(id) {
             ul.appendChild(li);
             console.log(retrievedData.Message);
         }        
+    }
+}
+```
+";
+
+    private string ServcerCode { get; } =
+    @"
+```
+public class UserActor : ReceiveActor
+{
+    private Queue<Notification> notifications = new Queue<Notification>();
+    public UserActor()
+    {
+        ReceiveAsync<Notification>(async msg =>
+        {
+            if (msg.IsProcessed == false)
+            {
+                notifications.Enqueue(msg);
+            }
+        });
+
+        ReceiveAsync<CheckNotification>(async msg =>
+        {
+            if (notifications.Count > 0)
+            {
+                Sender.Tell(notifications.Dequeue());
+            }
+            else
+            {
+                Sender.Tell(new EmptyNotification());
+            }
+        });
     }
 }
 ```

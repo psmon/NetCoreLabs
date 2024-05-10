@@ -31,11 +31,7 @@ namespace BlazorActorApp.Data.Actor
                 {
                     Sender.Tell(new EmptyNotification());
                 }
-            });
-
-            //CheckNotification
+            });         
         }
-
-
     }
 }
