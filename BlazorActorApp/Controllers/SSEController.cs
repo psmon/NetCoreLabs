@@ -14,29 +14,22 @@ namespace BlazorActorApp.Controllers
     public class SSEController : Controller
     {        
 
-        private AkkaService AkkaService { get; set; }
+        private SSEService SSEService { get; set; }
 
+        private string PreFix = "sse-";
         
-        public SSEController(AkkaService actorSystem )
+        public SSEController(SSEService sseService)
         {
-            AkkaService = actorSystem;        
+            SSEService = sseService;        
         }
 
         [HttpGet("message/{identy}")]
         public async Task<ActionResult> GetMessageByActor(string identy)
         {            
             var stringBuilder = new StringBuilder();
+            string actorName = $"{PreFix}{identy}";
 
-            string actorName = $"{identy}-SSE";
-
-            IActorRef myActor = AkkaService.GetActor(actorName);
-            if (myActor == null)
-            {
-                myActor = AkkaService.GetActorSystem().ActorOf(Props.Create<SSEUserActor>(actorName));
-                AkkaService.AddActor(actorName, myActor);
-            }
-
-            object message = await myActor.Ask(new CheckNotification(), TimeSpan.FromSeconds(3));            
+            object message = await SSEService.CheckNotification(actorName);
 
             if (message is Notification)
             {
@@ -59,20 +52,20 @@ namespace BlazorActorApp.Controllers
         }
 
         [HttpPost("webhook")]
-        public async Task<IActionResult> notificationTest(string identy, string message)
+        public async Task<IActionResult> PushNotification(string identy, string message)
         {
             try
             {
-                string actorName = $"{identy}-Actor";
-
-                IActorRef myActor = AkkaService.GetActor(actorName);
-                myActor.Tell(new Notification()
+                string actorName = $"{PreFix}{identy}";
+                var noti = new Notification()
                 {
                     Id = identy,
                     IsProcessed = false,
                     Message = message,
-                    MessageTime = DateTime.Now,                    
-                });
+                    MessageTime = DateTime.Now,
+                };
+
+                await SSEService.PushNotification(actorName, noti);
                 return Ok();
             }
             catch (Exception ex)

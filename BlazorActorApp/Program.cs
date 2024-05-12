@@ -12,7 +12,9 @@ using BlazorActorApp.Data;
 using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
 using BlazorActorApp.Logging;
+using BlazorActorApp.Service.SSE.Actor;
 
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 
@@ -23,28 +25,20 @@ Logger.Configure();
 Logger.Log.Info("App starting");
 
 
-/* Lets log something every second to simulate legitimate log output
-System.Timers.Timer timer = new System.Timers.Timer(1000);
-timer.Elapsed += (source, e) =>
-{
-    Logger.Log.Info("tick");
-};
-timer.Enabled = true;
-timer.Start();
-*/
-
 var builder = WebApplication.CreateBuilder(args);
 
 string docUrl = "https://wiki.webnori.com/display/AKKA";
 
 // Add services to the container.
-
+builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+// reconfigures Blazor app root path
+builder.Services.Configure<RazorPagesOptions>(options => options.RootDirectory = "/Pages");
 
-builder.Services.AddEndpointsApiExplorer().AddMvc(c => c.Conventions.Add(new ApiExplorerIgnores()));
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -79,7 +73,7 @@ builder.Services.AddMudMarkdownServices();
 
 builder.Services.AddScoped<DebugService>();
 builder.Services.AddScoped<JsConsole>();
-
+builder.Services.AddScoped<SSEService>();
 
 
 builder.Services.AddResponseCompression(opts =>
@@ -132,7 +126,6 @@ var random = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new Rando
 akkaService.AddActor("random", random);
 var randomMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("randomMonitor", randomMonitor);
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

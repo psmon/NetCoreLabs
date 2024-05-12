@@ -2,13 +2,14 @@
 @using Akka.Actor;
 @inject IJSRuntime JS
 
-@using Akka.Actor;
 @using BlazorActorApp.Components;
 @using BlazorActorApp.Data.Actor;
 @using BlazorActorApp.Data.SSE;
 @using BlazorActorApp.Logging;
 @using BlazorActorApp.Service.SSE;
 @using BlazorActorApp.Service.SSE.Actor;
+
+@inject SSEService SSEService
 
 <PageTitle>SSEClient</PageTitle>
 
@@ -78,21 +79,18 @@
 
     protected async Task OnSend()
     {
-        string actorName = $"{_username_target}-SSE";
-        var userActor = AkkaService.GetActor(actorName);
+        string preFix = "sse-";
+        string actorName = $"{preFix}{_username_target}";
 
-        if (userActor == null)
-        {
-            userActor = AkkaService.GetActorSystem().ActorOf(Props.Create<SSEUserActor>(actorName));
-            AkkaService.AddActor(actorName, userActor);
-        }
-
-        userActor.Tell(new Notification()
+        var noti = new Notification()
         {
             Id = _username_target,
             Message = message,
             MessageTime = DateTime.Now
-        });
+        };
+
+        await SSEService.PushNotification(actorName, noti);
+
     }
 
     private string FrontCode { get; } =
