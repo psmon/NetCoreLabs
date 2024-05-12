@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ActorLib\ActorLib.csproj" />
+    <ProjectReference Include="..\BlazorActorApp\BlazorActorApp.csproj" />
   </ItemGroup>
 
 </Project>

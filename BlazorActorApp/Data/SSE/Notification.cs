@@ -13,7 +13,7 @@
     {
     }
 
-    public class EmptyNotification
+    public class HeatBeatNotification
     {
     }
 

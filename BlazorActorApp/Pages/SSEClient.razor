@@ -75,12 +75,12 @@
 
     protected async Task OnSend()
     {
-        string actorName = $"{_username_target}-Actor";
+        string actorName = $"{_username_target}-SSE";
         var userActor = AkkaService.GetActor(actorName);
 
         if (userActor == null)
         {
-            userActor = AkkaService.GetActorSystem().ActorOf(Props.Create<UserActor>());
+            userActor = AkkaService.GetActorSystem().ActorOf(Props.Create<SSEUserActor>(actorName));
             AkkaService.AddActor(actorName, userActor);
         }
 

@@ -1,15 +1,12 @@
-﻿using System.Collections.Concurrent;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 
 using ActorLib;
 
 using Akka.Actor;
-using Akka.Streams.Implementation.Fusing;
 
 using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
-using BlazorActorApp.Logging;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,21 +37,13 @@ namespace BlazorActorApp.Controllers
         {            
             var stringBuilder = new StringBuilder();
 
-            string actorName = $"{identy}-Actor";
+            string actorName = $"{identy}-SSE";
 
             IActorRef myActor = AkkaService.GetActor(actorName);
             if (myActor == null)
             {
-                myActor = AkkaService.GetActorSystem().ActorOf(Props.Create<UserActor>());
+                myActor = AkkaService.GetActorSystem().ActorOf(Props.Create<SSEUserActor>(actorName));
                 AkkaService.AddActor(actorName, myActor);
-
-                myActor.Tell(new Notification()
-                {
-                    Id = identy,
-                    MessageTime = DateTime.Now,
-                    Message = "웰컴메시지.. sent by sse",
-                    IsProcessed = false
-                });
             }
 
             object message = await myActor.Ask(new CheckNotification(), TimeSpan.FromSeconds(3));            
@@ -65,16 +54,15 @@ namespace BlazorActorApp.Controllers
                 stringBuilder.AppendFormat("data: {0}\n\n", serializedData);
                 return Content(stringBuilder.ToString(), "text/event-stream");
             }
-            else if (message is EmptyNotification)
+            else if (message is HeatBeatNotification)
             {
-                var serializedData = JsonSerializer.Serialize(new EmptyNotification());
+                var serializedData = JsonSerializer.Serialize(new HeatBeatNotification());
                 stringBuilder.AppendFormat("data: null", serializedData);
                 return Content(stringBuilder.ToString(), "text/event-stream");
             }
             else
             {
-                var typeName = message.GetType().Name;
-                int x = 99;
+                var typeName = message.GetType().Name;                
                 stringBuilder.AppendFormat("data: null \n\n");
                 return Content(stringBuilder.ToString(), "text/event-stream");
             }
