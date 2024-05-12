@@ -78,7 +78,7 @@ namespace ActorLibTest.Intro
         [GcMeasurement(GcMetric.TotalCollections, GcGeneration.AllGc)]
         public void SSEUserActorPerformanceTest()
         {
-            int testUser = 15;
+            int testUser = 100;
             int testEventPerUser = 10;
             for (int i = 0; i < testUser; i++) 
             {
