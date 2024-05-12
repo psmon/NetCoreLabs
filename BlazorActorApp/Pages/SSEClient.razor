@@ -27,6 +27,9 @@
 <ul id="sse">
 </ul>
 
+<ul id="sse2">
+</ul>
+
 <hr>
 <MudText Typo="Typo.h5">전송서버</MudText>
 
@@ -74,7 +77,7 @@
 
     protected async Task OnStart()
     {
-        await JS.InvokeVoidAsync("display", _username);
+        await JS.InvokeVoidAsync("StartSSE", _username);
     }
 
     protected async Task OnSend()
@@ -96,7 +99,7 @@
     private string FrontCode { get; } =
 @"
 ```
-function display(id) {
+function StartSSE(id) {
     var source = new EventSource('/api/sse/message/' + id);
 
     var ul = document.getElementById('sse');
@@ -107,7 +110,7 @@ function display(id) {
             li.textContent = retrievedData.Message;
             ul.appendChild(li);
             console.log(retrievedData.Message);
-        }        
+        }
     }
 }
 ```
