@@ -1,12 +1,11 @@
-﻿using ActorLib.Actors.Test;
-
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.TestKit;
 
-using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
+using BlazorActorApp.Service.SSE.Actor;
 
 using NBench;
+
 using Pro.NBench.xUnit.XunitExtensions;
 
 using Xunit.Abstractions;

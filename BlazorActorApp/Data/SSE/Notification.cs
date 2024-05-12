@@ -13,7 +13,7 @@
     {
     }
 
-    public class HeatBeatNotification
+    public class HeartBeatNotification
     {
     }
 

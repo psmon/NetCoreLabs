@@ -4,10 +4,8 @@ using System.Text.Json;
 using ActorLib;
 
 using Akka.Actor;
-
-using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
-
+using BlazorActorApp.Service.SSE.Actor;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorActorApp.Controllers
@@ -22,14 +20,6 @@ namespace BlazorActorApp.Controllers
         public SSEController(AkkaService actorSystem )
         {
             AkkaService = actorSystem;        
-        }
-        public ActionResult Index()
-        {
-            return View();
-        }
-        public ActionResult About()
-        {
-            return View();
         }
 
         [HttpGet("message/{identy}")]
@@ -54,9 +44,9 @@ namespace BlazorActorApp.Controllers
                 stringBuilder.AppendFormat("data: {0}\n\n", serializedData);
                 return Content(stringBuilder.ToString(), "text/event-stream");
             }
-            else if (message is HeatBeatNotification)
+            else if (message is HeartBeatNotification)
             {
-                var serializedData = JsonSerializer.Serialize(new HeatBeatNotification());
+                var serializedData = JsonSerializer.Serialize(new HeartBeatNotification());
                 stringBuilder.AppendFormat("data: null", serializedData);
                 return Content(stringBuilder.ToString(), "text/event-stream");
             }
@@ -68,8 +58,8 @@ namespace BlazorActorApp.Controllers
             }
         }
 
-        [HttpGet("noti-test/{identy}")]
-        public async Task<IActionResult> notificationTest(string identy)
+        [HttpPost("webhook")]
+        public async Task<IActionResult> notificationTest(string identy, string message)
         {
             try
             {
@@ -80,7 +70,7 @@ namespace BlazorActorApp.Controllers
                 {
                     Id = identy,
                     IsProcessed = false,
-                    Message = "SSE TEST 메시지",
+                    Message = message,
                     MessageTime = DateTime.Now,                    
                 });
                 return Ok();

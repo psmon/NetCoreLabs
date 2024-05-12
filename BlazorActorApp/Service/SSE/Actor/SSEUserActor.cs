@@ -2,7 +2,7 @@
 
 using BlazorActorApp.Data.SSE;
 
-namespace BlazorActorApp.Data.Actor
+namespace BlazorActorApp.Service.SSE.Actor
 {
     public class SSEUserActor : ReceiveActor
     {
@@ -11,7 +11,7 @@ namespace BlazorActorApp.Data.Actor
         private string IdentyValue { get; set; }
 
         private IActorRef testProbe;
-        public SSEUserActor(string identyValue) 
+        public SSEUserActor(string identyValue)
         {
             IdentyValue = identyValue;
 
@@ -33,24 +33,24 @@ namespace BlazorActorApp.Data.Actor
                 if (msg.IsProcessed == false)
                 {
                     notifications.Enqueue(msg);
-                }                
-              
+                }
+
             });
 
-            ReceiveAsync<HeatBeatNotification>(async msg =>
+            ReceiveAsync<HeartBeatNotification>(async msg =>
             {
                 if (testProbe != null)
                 {
-                    testProbe.Tell(new HeatBeatNotification());
+                    testProbe.Tell(new HeartBeatNotification());
                 }
                 else
                 {
-                    Sender.Tell(new HeatBeatNotification());
+                    Sender.Tell(new HeartBeatNotification());
                 }
             });
 
             ReceiveAsync<CheckNotification>(async msg =>
-            {                
+            {
                 if (notifications.Count > 0)
                 {
                     if (testProbe != null)
@@ -60,11 +60,11 @@ namespace BlazorActorApp.Data.Actor
                     else
                     {
                         Sender.Tell(notifications.Dequeue());
-                    }                    
+                    }
                 }
                 else
                 {
-                    HeatBeatNotification heatBeatNotification = new HeatBeatNotification();
+                    HeartBeatNotification heatBeatNotification = new HeartBeatNotification();
 
                     Task.Delay(1000).ContinueWith(tr => heatBeatNotification)
                         .PipeTo(Self, Sender);

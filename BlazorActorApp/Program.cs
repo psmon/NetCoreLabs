@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using ActorLib;
 using ActorLib.Actors.Test;
 using ActorLib.Actors.Tools;
@@ -5,12 +7,14 @@ using ActorLib.Actors.Tools;
 using Akka.Actor;
 using Akka.Routing;
 
+using BlazorActorApp;
 using BlazorActorApp.Data;
 using BlazorActorApp.Data.Actor;
 using BlazorActorApp.Data.SSE;
 using BlazorActorApp.Logging;
 
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.OpenApi.Models;
 
 using MudBlazor;
 using MudBlazor.Services;
@@ -31,10 +35,42 @@ timer.Start();
 
 var builder = WebApplication.CreateBuilder(args);
 
+string docUrl = "https://wiki.webnori.com/display/AKKA";
+
 // Add services to the container.
+
 builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+
+builder.Services.AddEndpointsApiExplorer().AddMvc(c => c.Conventions.Add(new ApiExplorerIgnores()));
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "NetCore API",
+        Description = "Netcore API",
+        TermsOfService = new Uri(docUrl),
+        Contact = new OpenApiContact
+        {
+            Name = "Document",
+            Url = new Uri(docUrl)
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Akka News",
+            Url = new Uri("https://wiki.webnori.com/display/AKKA/AKKA+NEWS")
+        }
+    });
+
+    // using System.Reflection;
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<AkkaService>();
 builder.Services.AddBlazorBootstrap();
@@ -43,6 +79,8 @@ builder.Services.AddMudMarkdownServices();
 
 builder.Services.AddScoped<DebugService>();
 builder.Services.AddScoped<JsConsole>();
+
+
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -102,13 +140,21 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
 }
 
+app.UseSwagger();
+
+app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    //options.RoutePrefix = "/help";
+});
+
 app.UseStaticFiles();
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapBlazorHub();
+    endpoints.MapBlazorHub();    
     endpoints.MapHub<LoggingHub>("/hubs/logging");
     endpoints.MapFallbackToPage("/_Host");
 });

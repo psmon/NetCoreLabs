@@ -1,4 +1,5 @@
 ﻿@page "/sse/client"
+@using Akka.Actor;
 @inject IJSRuntime JS
 
 @using Akka.Actor;
@@ -6,6 +7,8 @@
 @using BlazorActorApp.Data.Actor;
 @using BlazorActorApp.Data.SSE;
 @using BlazorActorApp.Logging;
+@using BlazorActorApp.Service.SSE;
+@using BlazorActorApp.Service.SSE.Actor;
 
 <PageTitle>SSEClient</PageTitle>
 
