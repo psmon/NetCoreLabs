@@ -24,8 +24,5 @@
             console.log(retrievedData.Message);
         }
     }
-
-
-
 }
 
