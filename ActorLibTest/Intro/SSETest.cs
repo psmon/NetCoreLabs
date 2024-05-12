@@ -76,6 +76,7 @@ namespace ActorLibTest.Intro
         [CounterThroughputAssertion("TestCounter", MustBe.GreaterThan, 10.0d)]
         [CounterTotalAssertion("TestCounter", MustBe.GreaterThan, 100.0d)]
         [CounterMeasurement("TestCounter")]
+        [GcMeasurement(GcMetric.TotalCollections, GcGeneration.AllGc)]
         public void SSEUserActorPerformanceTest()
         {
             int testUser = 15;
