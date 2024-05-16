@@ -7,10 +7,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["BlazorActorApp/BlazorActorApp.csproj", "BlazorActorApp/"]
+COPY ["ActorLib/ActorLib.csproj", "ActorLib/"]
+
 RUN dotnet restore "BlazorActorApp/BlazorActorApp.csproj"
 COPY . .
 WORKDIR "/src/BlazorActorApp"
-RUN dotnet build "BlazorActorApp.csproj" -c Release -o /app/build
+RUN dotnet build "BlazorActorApp.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
 RUN dotnet publish "BlazorActorApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
