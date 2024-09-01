@@ -31,18 +31,18 @@ namespace ActorLib.Actors.Tools
                       .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
                       .Run(_materializer);
 
-            ReceiveAsync<SetTarget>(async target =>
+            Receive<SetTarget>(target =>
             {
                 consumer = target.Ref;
             });
 
 
-            ReceiveAsync<TPSInfoReq>(async target =>
+            Receive<TPSInfoReq>(target =>
             {
                 Sender.Tell(_processCouuntPerSec);
             });
 
-            ReceiveAsync<ChangeTPS>(async msg =>
+            Receive<ChangeTPS>(msg =>
             {
                 var oldThrottler = _throttler;
 
@@ -61,7 +61,7 @@ namespace ActorLib.Actors.Tools
             });
 
 
-            ReceiveAsync<TodoQueue>(async msg =>
+            Receive<TodoQueue>(msg =>
             {
                 _throttler.Tell(new Todo()
                 {
@@ -70,7 +70,7 @@ namespace ActorLib.Actors.Tools
                 });
             });
 
-            ReceiveAsync<Todo>(async msg =>
+            Receive<Todo>(msg =>
             {
                 logger.Info($"{msg.Id} - {msg.Title}");
                 // TODO Something

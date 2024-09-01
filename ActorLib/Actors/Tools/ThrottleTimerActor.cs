@@ -26,12 +26,12 @@ namespace ActorLib.Actors.Tools
                          Self, new Flush(), ActorRefs.NoSender);
 
 #pragma warning disable CS1998
-            ReceiveAsync<SetTarget>(async target =>
+            Receive<SetTarget>(target =>
             {
                 consumer = target.Ref;
             });
 
-            ReceiveAsync<EventCmd>(async message =>
+            Receive<EventCmd>(message =>
             {
                 if (eventQueue.Count > maxBust)
                 {
@@ -42,7 +42,7 @@ namespace ActorLib.Actors.Tools
 
             });
 
-            ReceiveAsync<Flush>(async message =>
+            Receive<Flush>(message =>
             {
                 if (eventQueue.Count > 0)
                 {
