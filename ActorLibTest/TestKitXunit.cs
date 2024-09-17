@@ -74,7 +74,12 @@ namespace ActorLibTest
             return ConfigurationFactory.ParseString(@"
                 akka {	
 	                loglevel = DEBUG
-	                loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]                
+	                loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]
+                }
+
+                # MailBox
+                my-custom-mailbox {
+                    mailbox-type : ""ActorLib.Actors.Test.IssueTrackerMailbox, ActorLib""
                 }
 
                 # Dispatchers

@@ -11,19 +11,19 @@ namespace ActorLib.Actors.Test
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();
 
-        private IActorRef testProbe;
+        private IActorRef? testProbe;
 
         public BasicActor()
         {
 
-            ReceiveAsync<IActorRef>(async actorRef =>
+            Receive<IActorRef>(actorRef =>
             {
                 testProbe = actorRef;
 
                 testProbe.Tell("done");
             });
 
-            ReceiveAsync<Todo>(async msg =>
+            Receive<Todo>(msg =>
             {
                 if (testProbe != null)
                 {
@@ -46,7 +46,7 @@ namespace ActorLib.Actors.Test
 
             });
 
-            ReceiveAsync<string>(async msg =>
+            Receive<string>(msg =>
             {
                 if (testProbe != null)
                 {
@@ -57,8 +57,8 @@ namespace ActorLib.Actors.Test
                     Sender.Tell("world");
                 }
             });
-            
-            ReceiveAsync<MessageCommand>(async msg =>
+
+            Receive<MessageCommand>(msg =>
             {
                 if (testProbe != null)
                 {
@@ -70,7 +70,19 @@ namespace ActorLib.Actors.Test
                 }
             });
 
-            ReceiveAsync<RemoteCommand>(async msg =>
+            Receive<Issue>(msg =>
+            {
+                if (testProbe != null)
+                {
+                    testProbe.Tell(msg);                    
+                }
+                else
+                {
+                    Sender.Tell(msg);
+                }
+            });
+
+            Receive<RemoteCommand>( msg =>
             {
                 logger.Info($"ReceiveRemoteCommand:{msg.Message} Path:{Self.Path}");
             });
