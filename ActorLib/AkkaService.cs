@@ -21,8 +21,7 @@ namespace ActorLib
                 else
                 {
                     // Note :
-                    // 액터시스템을 띄워 멀티 리모트 테스트를 위한 용도이며~
-                    // 일반적 상황에서는 단일어플리케이션당  단일 시스템을 이용합니다.
+                    // 포트가 지정된경우 리모트로 작동되며 다양한 Actor 작동을 커스텀 설정합니다.
                     string akkaConfig = @"
                     akka {
                         loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]	
@@ -36,7 +35,11 @@ namespace ActorLib
                                 hostname = ""127.0.0.1""
                             }
                         }	
-                    }";
+                    }
+                    my-custom-mailbox {
+                        mailbox-type : ""ActorLib.Actors.Test.IssueTrackerMailbox, ActorLib""
+                    }
+                    ";
 
                     akkaConfig = akkaConfig.Replace("$port", port.ToString());
                     var config = ConfigurationFactory.ParseString(akkaConfig);

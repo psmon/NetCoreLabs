@@ -39,4 +39,13 @@ namespace ActorLib.Actors.Test
 
         public bool IsBug { get; set; }
     }
+
+    public class ExpectIssue
+    {
+    }
+
+    public class NoIssue
+    {
+    }
+
 }

@@ -74,6 +74,8 @@ namespace ActorLib.Actors.Test
             {
                 if (testProbe != null)
                 {
+                    // 우선순위 역전 테스트를 위해 200ms 지연
+                    Task.Delay(200).Wait();
                     testProbe.Tell(msg);                    
                 }
                 else
