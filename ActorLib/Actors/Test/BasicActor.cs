@@ -70,6 +70,18 @@ namespace ActorLib.Actors.Test
                 }
             });
 
+            Receive<Issue>(msg =>
+            {
+                if (testProbe != null)
+                {
+                    testProbe.Tell(msg);                    
+                }
+                else
+                {
+                    Sender.Tell(msg);
+                }
+            });
+
             Receive<RemoteCommand>( msg =>
             {
                 logger.Info($"ReceiveRemoteCommand:{msg.Message} Path:{Self.Path}");

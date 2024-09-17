@@ -127,6 +127,7 @@ akkaService.AddActor("random", random);
 var randomMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("randomMonitor", randomMonitor);
 
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

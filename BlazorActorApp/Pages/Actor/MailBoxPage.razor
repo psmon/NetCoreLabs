@@ -1,0 +1,60 @@
+﻿@page "/actor/mailbox"
+@using ActorLib.Actors.Test;
+@using Akka.Actor;
+@using Akka.Routing;
+@using BlazorActorApp.Components;
+@using BlazorActorApp.Data.Actor;
+@using BlazorActorApp.Logging;
+
+@inject DebugService DebugService;
+
+<PageTitle>mailbox</PageTitle>
+
+<MudCard>
+    <MudCardContent>
+        <MudText>MailBox</MudText>
+        <MudText Typo="Typo.body2">액터가 보유한 메일박스 메시지 처리 우선순위를 커스텀할수 있습니다.</MudText>
+    </MudCardContent>
+</MudCard>
+
+<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudMarkdown Value="@Value" />
+
+@code {
+    
+}
+
+@code
+{
+    private string Value { get; } =
+        @"
+```
+            var actorSystem = akkaService.GetActorSystem();
+            TestProbe testProbe = this.CreateTestProbe(actorSystem);
+            var mailBoxActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox(""my-custom-mailbox"") );
+            mailBoxActor.Tell(testProbe.Ref);
+            testProbe.ExpectMsg(""done"");
+
+
+            Within(TimeSpan.FromMilliseconds(cutoff), () =>
+            {
+                mailBoxActor.Tell(new Issue() { IsBug = true });
+                mailBoxActor.Tell(new Issue());
+                mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
+                mailBoxActor.Tell(new Issue() { IsBug = true });
+                mailBoxActor.Tell(new Issue() { IsBug = true });
+                mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
+                mailBoxActor.Tell(new Issue());
+
+                for (int i = 0; i < testCount; i++)
+                {
+                    var issue = testProbe.ExpectMsg<Issue>();
+                    var jsonString = JsonSerializer.Serialize(issue);
+                    output.WriteLine($""Issue: {jsonString}"");
+                }
+            });
+
+```
+";
+
+}
