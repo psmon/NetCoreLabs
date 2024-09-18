@@ -60,25 +60,27 @@
         MonitorActor = AkkaService.GetActor("defaultMonitor");
     }
 
-    private void CreateActor()
+    private async Task CreateActor()
     {
         try
         {
-            DebugService.AddLogMessage($"Create Actor : {actorName}");
+            await DebugService.AddLogMessage($"Create Actor : {actorName}");
             currentActor = ActorSystem.ActorOf(Props.Create<BasicActor>(), actorName);
             currentActor.Tell(MonitorActor);            
         }
         catch(Exception e)
         {
-            DebugService.AddLogMessage(e.Message);
+            await DebugService.AddLogMessage(e.Message);
         }
     }
 
-    private void SendMessage()
+    private async Task SendMessage()
     {
         if (currentActor != null)
         {
             currentActor.Tell(new MessageCommand(message));
+
+            await DebugService.AddLogMessage($"SendMessage : {message} to {currentActor.Path}");
         }
     }
 }

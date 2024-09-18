@@ -4,7 +4,7 @@
 @using Akka.Routing;
 @using BlazorActorApp.Components;
 @using BlazorActorApp.Data.Actor;
-
+@implements IDisposable
 
 <PageTitle>broad-cast</PageTitle>
 
@@ -73,6 +73,21 @@
     {        
         // TODO : Improve sync method in real time
         InvokeAsync(SyncCount);        
+    }
+
+    private void StopTimer()
+    {
+        if (aTimer != null)
+        {
+            aTimer.Stop();
+            aTimer.Dispose();
+            aTimer = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        StopTimer();
     }
 
     protected override async Task OnInitializedAsync()
