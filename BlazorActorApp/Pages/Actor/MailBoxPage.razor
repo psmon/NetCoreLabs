@@ -5,6 +5,8 @@
 @using BlazorActorApp.Components;
 @using BlazorActorApp.Data.Actor;
 @using BlazorActorApp.Logging;
+@using System.Text.Json
+@implements IDisposable
 
 @inject DebugService DebugService;
 
@@ -13,48 +15,174 @@
 <MudCard>
     <MudCardContent>
         <MudText>MailBox</MudText>
-        <MudText Typo="Typo.body2">액터가 보유한 메일박스 메시지 처리 우선순위를 커스텀할수 있습니다.</MudText>
+        <MudText Typo="Typo.body2">액터가 보유한 메일박스 메시지 처리 우선순위를 커스텀할수 있습니다. DEV Console을 통해 작동확인가능 </MudText>
     </MudCardContent>
 </MudCard>
 
-<MudText Typo="Typo.h5">SampleCode</MudText>
+<MudGrid>    
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Class="py-4 d-flex flex-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="TestActor">MailBox TEST</MudButton>
+    </MudItem>
+</MudGrid>
+
 <MudMarkdown Value="@Value" />
 
 @code {
+
+    private ActorSystem ActorSystem { get; set; }
+
+    private IActorRef MonitorActor { get; set; }
+
+    private IActorRef CurrentActor { get; set; }
+
+    private static System.Timers.Timer aTimer;
+
+    private void StartTimer()
+    {
+        aTimer = new System.Timers.Timer(500);
+        aTimer.Elapsed += OnTimer;
+        aTimer.Enabled = true;
+    }
+
+    private void StopTimer()
+    {
+        if (aTimer != null)
+        {
+            aTimer.Stop();
+            aTimer.Dispose();
+            aTimer = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        StopTimer();
+    }
+
+    public void OnTimer(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        // TODO : Improve sync method in real time
+        InvokeAsync(SyncActor);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Actor
+        ActorSystem = AkkaService.GetActorSystem();
+        CurrentActor = AkkaService.GetActor("mailBoxActor");
+        MonitorActor = AkkaService.GetActor("mailBoxMonitor");
+        StartTimer();
+    }
+
     
+    private async Task TestActor()
+    {   
+        // 우선순위 역전은 단순하게 컬렉션을 정렬하는이슈가 아닌
+        // 처리가 진행되는동안, 처리가 되지않은 메일함에 쌓인 메시지내에서 
+        // 우선순위가 조정이됩니다.  
+
+        await DebugService.AddLogMessage($"## Create Mixed Issue at Same Time");
+
+        CurrentActor.Tell(new Issue());
+        CurrentActor.Tell(new Issue());
+        CurrentActor.Tell(new Issue() { IsBug = true });
+        CurrentActor.Tell(new Issue());
+        CurrentActor.Tell(new Issue() { IsBug = true });
+        CurrentActor.Tell(new Issue());
+        CurrentActor.Tell(new Issue());
+        CurrentActor.Tell(new Issue() { IsBug = true });
+        CurrentActor.Tell(new Issue() { IsSecurityFlaw = true });             
+    }
+
+    public async Task SyncActor()
+    {
+        var issue = await MonitorActor.Ask(new ExpectIssue());
+
+        if(issue is Issue)
+        {
+            var jsonString = JsonSerializer.Serialize(issue);
+            await DebugService.AddLogMessage($"## Recived Issue : {jsonString}");            
+        }
+        else if(issue is NoIssue)
+        {
+
+        }
+    }
 }
 
 @code
 {
     private string Value { get; } =
         @"
+
+
+<img src=""/img/actor-mailbox.png"" alt=""mailbox"" class=""img-fluid"" />
+
+
+액터는 MailBox를 가지고 있으며 FIFO(First In First Out) 방식으로 기본처리가 되며,
+중요 메시지에 우선순위에 부여하고자 한다면 MailBox 커스텀을 통해 중요한 우선순위 조정을 할수도 있습니다.
+
+#### 커스텀 메일박스
 ```
-            var actorSystem = akkaService.GetActorSystem();
-            TestProbe testProbe = this.CreateTestProbe(actorSystem);
-            var mailBoxActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox(""my-custom-mailbox"") );
-            mailBoxActor.Tell(testProbe.Ref);
-            testProbe.ExpectMsg(""done"");
 
-
-            Within(TimeSpan.FromMilliseconds(cutoff), () =>
+public class MyCustomMailbox : UnboundedPriorityMailbox
+{
+    protected override int PriorityGenerator(object message)
+    {
+        if (message is Issue issue)
+        {
+            if (issue.IsSecurityFlaw)
             {
-                mailBoxActor.Tell(new Issue() { IsBug = true });
-                mailBoxActor.Tell(new Issue());
-                mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
-                mailBoxActor.Tell(new Issue() { IsBug = true });
-                mailBoxActor.Tell(new Issue() { IsBug = true });
-                mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
-                mailBoxActor.Tell(new Issue());
+                return 0;
+            }
+            else if (issue.IsBug)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+        return 3;
+    }
+}
 
-                for (int i = 0; i < testCount; i++)
-                {
-                    var issue = testProbe.ExpectMsg<Issue>();
-                    var jsonString = JsonSerializer.Serialize(issue);
-                    output.WriteLine($""Issue: {jsonString}"");
-                }
-            });
 
 ```
+
+#### 사용샘플
+
+```
+var actorSystem = akkaService.GetActorSystem();
+TestProbe testProbe = this.CreateTestProbe(actorSystem);
+var mailBoxActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox(""my-custom-mailbox"") );
+mailBoxActor.Tell(testProbe.Ref);
+testProbe.ExpectMsg(""done"");
+
+
+Within(TimeSpan.FromMilliseconds(cutoff), () =>
+{
+    mailBoxActor.Tell(new Issue() { IsBug = true });
+    mailBoxActor.Tell(new Issue());
+    mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
+    mailBoxActor.Tell(new Issue() { IsBug = true });
+    mailBoxActor.Tell(new Issue() { IsBug = true });
+    mailBoxActor.Tell(new Issue() { IsSecurityFlaw = true });
+    mailBoxActor.Tell(new Issue());
+
+    for (int i = 0; i < testCount; i++)
+    {
+        var issue = testProbe.ExpectMsg<Issue>();
+        var jsonString = JsonSerializer.Serialize(issue);
+        output.WriteLine($""Issue: {jsonString}"");
+    }
+});
+
+```
+
+
+
 ";
 
 }

@@ -1,4 +1,5 @@
-﻿using ActorLib.Actors.Tools;
+﻿using ActorLib.Actors.Test;
+using ActorLib.Actors.Tools;
 
 using Akka.Actor;
 using Akka.Event;
@@ -25,14 +26,16 @@ namespace BlazorActorApp.Data.Actor
 
         private Dictionary<string, int> MessageCounts = new Dictionary<string, int>();
 
+        private Queue<Issue> Issues = new Queue<Issue>();
+
         public SimpleMonitorActor()
         {
-            ReceiveAsync<ActorCountInfoReq>(async msg =>
+            Receive<ActorCountInfoReq>(msg =>
             {
                 Sender.Tell(new ActorCountInfoRes(MessageCounts));
             });
 
-            ReceiveAsync<Todo>(async msg =>
+            Receive<Todo>(msg =>
             {
                 string actorName = Sender.Path.Name;
 
@@ -46,10 +49,25 @@ namespace BlazorActorApp.Data.Actor
                 {
                     MessageCounts[actorName]++;
                 }
-
             });
 
-            ReceiveAsync<string>(async msg =>
+            Receive<Issue>(msg => {
+                Issues.Enqueue(msg);
+            });
+
+            Receive<ExpectIssue>(msg => {
+                if (Issues.Count > 0)
+                {
+                    var issue = Issues.Dequeue();
+                    Sender.Tell(issue);
+                }
+                else
+                {
+                    Sender.Tell(new NoIssue());
+                }
+            });
+
+            Receive<string>(msg =>
             {
                 string actorName = Sender.Path.Name;
 

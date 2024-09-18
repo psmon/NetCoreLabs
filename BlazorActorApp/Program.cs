@@ -121,11 +121,19 @@ akkaService.AddActor("broadcast", broadcast);
 var broadcastMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("broadcastMonitor", broadcastMonitor);
 
+
 // Random Router
 var random = actorSystem.ActorOf(Props.Create<BasicActor>().WithRouter(new RandomPool(0)), "random");
 akkaService.AddActor("random", random);
 var randomMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
 akkaService.AddActor("randomMonitor", randomMonitor);
+
+// MailBox
+var mailBoxActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox("my-custom-mailbox"), "my-custom-mailbox");
+akkaService.AddActor("mailBoxActor", mailBoxActor);
+var mailBoxMonitor = actorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
+akkaService.AddActor("mailBoxMonitor", mailBoxMonitor);
+mailBoxActor.Tell(mailBoxMonitor);
 
 
 // Configure the HTTP request pipeline.
