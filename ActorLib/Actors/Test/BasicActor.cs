@@ -91,5 +91,19 @@ namespace ActorLib.Actors.Test
                 logger.Info($"ReceiveRemoteCommand:{msg.Message} Path:{Self.Path}");
             });
         }
+
+        protected override void PreStart()
+        {
+            // 액터가 생성될 때 실행할 코드
+            logger.Info("BasicActor is starting.");
+            base.PreStart();
+        }
+
+        protected override void PostStop()
+        {
+            // 액터가 종료될 때 실행할 코드
+            logger.Info("BasicActor is stopping.");
+            base.PostStop();
+        }
     }
 }

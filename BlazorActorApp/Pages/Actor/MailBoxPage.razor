@@ -59,6 +59,10 @@
     public void Dispose()
     {
         StopTimer();
+
+        ActorSystem = AkkaService.GetActorSystem();
+        ActorSystem.Stop(CurrentActor);
+        ActorSystem.Stop(MonitorActor);        
     }
 
     public void OnTimer(Object source, System.Timers.ElapsedEventArgs e)
@@ -69,15 +73,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Actor
-        ActorSystem = AkkaService.GetActorSystem();        
 
-        // MailBox
-        CurrentActor = ActorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox("my-custom-mailbox"));        
-        MonitorActor = ActorSystem.ActorOf(Props.Create<SimpleMonitorActor>());                
-        CurrentActor.Tell(MonitorActor);
+    }
 
-        StartTimer();
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Actor
+            ActorSystem = AkkaService.GetActorSystem();
+
+            // MailBox
+            CurrentActor = ActorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox("my-custom-mailbox"));
+            MonitorActor = ActorSystem.ActorOf(Props.Create<SimpleMonitorActor>());
+            CurrentActor.Tell(MonitorActor);
+
+            StartTimer();
+        }
     }
 
     
