@@ -72,6 +72,8 @@ namespace ActorLib.Actors.Test
 
             Receive<Issue>(msg =>
             {
+                logger.Info($"ReceiveIssue:{msg.ToJsonString()}");
+
                 if (testProbe != null)
                 {
                     // 우선순위 역전 테스트를 위해 200ms 지연

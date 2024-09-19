@@ -1,4 +1,5 @@
 ﻿@page "/actor/mailbox"
+@using ActorLib.Actors;
 @using ActorLib.Actors.Test;
 @using Akka.Actor;
 @using Akka.Routing;
@@ -19,13 +20,14 @@
     </MudCardContent>
 </MudCard>
 
-<MudGrid>    
-    <MudItem xs="12" sm="6" md="4">
-        <MudButton Class="py-4 d-flex flex-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="TestActor">MailBox TEST</MudButton>
-    </MudItem>
-</MudGrid>
 
 <MudMarkdown Value="@Value" />
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudButton Class="py-4 d-flex flex-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="TestActor">Test</MudButton>
+    </MudItem>
+</MudGrid>
 
 @code {
 
@@ -68,9 +70,13 @@
     protected override async Task OnInitializedAsync()
     {
         // Actor
-        ActorSystem = AkkaService.GetActorSystem();
-        CurrentActor = AkkaService.GetActor("mailBoxActor");
-        MonitorActor = AkkaService.GetActor("mailBoxMonitor");
+        ActorSystem = AkkaService.GetActorSystem();        
+
+        // MailBox
+        CurrentActor = ActorSystem.ActorOf(Props.Create(() => new BasicActor()).WithMailbox("my-custom-mailbox"));        
+        MonitorActor = ActorSystem.ActorOf(Props.Create<SimpleMonitorActor>());                
+        CurrentActor.Tell(MonitorActor);
+
         StartTimer();
     }
 
@@ -98,15 +104,16 @@
     {
         var issue = await MonitorActor.Ask(new ExpectIssue());
 
-        if(issue is Issue)
+        switch (issue)
         {
-            var jsonString = JsonSerializer.Serialize(issue);
-            await DebugService.AddLogMessage($"## Recived Issue : {jsonString}");            
+            case Issue i:
+            await DebugService.AddLogMessage($"## Recived Issue : {i.ToJsonString()}");
+            break;
+            case NoIssue:
+            // NoIssue 처리 로직
+            break;
         }
-        else if(issue is NoIssue)
-        {
 
-        }
     }
 }
 
@@ -151,7 +158,7 @@ public class MyCustomMailbox : UnboundedPriorityMailbox
 
 ```
 
-#### 사용샘플
+#### Test
 
 ```
 var actorSystem = akkaService.GetActorSystem();
@@ -181,6 +188,18 @@ Within(TimeSpan.FromMilliseconds(cutoff), () =>
 
 ```
 
+#### Test 결과
+```
+## Recived Issue : {""IsSecurityFlaw"":true,""IsBug"":false}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":true}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":true}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":true}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":false}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":false}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":false}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":false}
+## Recived Issue : {""IsSecurityFlaw"":false,""IsBug"":false}
+```
 
 
 ";
