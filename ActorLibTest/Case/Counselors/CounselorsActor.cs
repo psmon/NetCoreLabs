@@ -28,9 +28,7 @@ namespace ActorLibTest.Case.Counselors
                     Sender.Tell("SetCounselorsState");
                     skills = counselor.Skills;
 
-                    Become(Online);
-                    
-                    
+                    Become(Online);                                        
                 }
                 else if (counselor.State == CounselorsState.Offline)
                 {
@@ -43,8 +41,9 @@ namespace ActorLibTest.Case.Counselors
                     
                 }
                 break;
+
                 default:
-                    log.Info("received unknown message");
+                    log.Warning($"received unhanddle message : {message}");
                 break;
             }
         }
@@ -63,12 +62,30 @@ namespace ActorLibTest.Case.Counselors
                     Sender.Tell("I can't help you");
                 }                
                 break;
-                case AssignTask assignTask:
-                Sender.Tell("I Take Task");
+
+                case AssignTask assignTask:                
                 assignedTaskCount++;
+                Sender.Tell("I Take Task");
                 break;
-                case CompletedTask completedTask:
+
+                case CompletedTask completedTask:                
                 assignedTaskCount--;
+                Sender.Tell("I Did Task");
+                break;
+
+                case SetCounselorsState counselor:
+                if (counselor.State == CounselorsState.Offline)
+                {
+                    log.Info("counselors are offline");
+                    counselorsState = counselor.State;
+                    skills = counselor.Skills;
+                    Sender.Tell("SetCounselorsState");
+                    Become(OffLine);
+                }
+                break;
+
+                default:
+                log.Warning($"received unhanddle message : {message}");
                 break;
             }
         }
@@ -80,8 +97,22 @@ namespace ActorLibTest.Case.Counselors
                 case CheckTakeTask checkTask:
                 Sender.Tell("I am Not Here..");
                 break;
+
+                case SetCounselorsState counselor:
+                if (counselor.State == CounselorsState.Online)
+                {
+                    log.Info("counselors are online");
+                    counselorsState = counselor.State;
+                    Sender.Tell("SetCounselorsState");
+                    skills = counselor.Skills;
+                    Become(Online);
+                }
+                break;
+
+                default:
+                log.Warning($"received unhanddle message : {message}");
+                break;
             }
         }
-
     }
 }

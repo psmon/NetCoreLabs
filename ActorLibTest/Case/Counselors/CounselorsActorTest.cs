@@ -10,35 +10,38 @@ namespace ActorLibTest.Case.Counselors
         {
         }
 
-        [Theory(DisplayName = "CounselorsActorTestAreOK")]
-        [InlineData(5, 1)]
-        public void CounselorsActorTestAreOK(int counselorCount, int testCount)
+        [Fact(DisplayName = "CounselorsActorTestAreOK")]        
+        public void CounselorsActorTestAreOK()
         {
             var actorSystem = akkaService.GetActorSystem();
 
-            Within(TimeSpan.FromMilliseconds(3000), () =>
+            Within(TimeSpan.FromMilliseconds(10000), () =>
             {
                 var counselorActor = actorSystem.ActorOf(Props.Create(() => new CounselorsActor()));
 
-                var probe = this.CreateTestProbe(actorSystem);
+                counselorActor.Tell(new SetCounselorsState() { State = CounselorsState.Online, Skills = new int[] { 1, 2, 3 } });
 
-                counselorActor.Tell(new SetCounselorsState() { State = CounselorsState.Online, Skills = new int[] { 1,2,3 } }, probe);
+                ExpectMsg("SetCounselorsState");
 
-                probe.ExpectMsg("SetCounselorsState");
+                counselorActor.Tell(new CheckTakeTask() { SkillType = 1 });
 
-                counselorActor.Tell(new CheckTakeTask() { SkillType = 1 }, probe);
+                ExpectMsg("I can help you");
 
-                probe.ExpectMsg("I can help you");
+                counselorActor.Tell(new AssignTask() { TaskId = 1111 });
 
-                counselorActor.Tell(new AssignTask() { TaskId = 1111 }, probe);
+                ExpectMsg("I Take Task");
 
-                probe.ExpectMsg("I Take Task");                
+                counselorActor.Tell(new CheckTakeTask() { SkillType = 5 });
 
-                counselorActor.Tell(new CheckTakeTask() { SkillType = 5 }, probe);
+                ExpectMsg("I can't help you");
 
-                probe.ExpectMsg("I can't help you");
+                counselorActor.Tell(new SetCounselorsState() { State = CounselorsState.Offline, Skills = new int[] { 1, 2, 3 } });
 
+                ExpectMsg("SetCounselorsState");
 
+                counselorActor.Tell(new CheckTakeTask() { SkillType = 1 });
+
+                ExpectMsg("I am Not Here..");
             });
 
         }
