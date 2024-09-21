@@ -1,6 +1,6 @@
 ﻿namespace ActorLibTest.Case.Counselors
 {
-    public class CounselorsStates
+    public class CounselorsModels
     {
         
     }
@@ -11,8 +11,31 @@
         Online
     }
 
+    public class SuperVisorInfo()
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+    }
+
+    public class CounselorInfo
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+    }
+
+    public class CreateCounselor
+    {
+        public CounselorInfo Counselor { get; set; }        
+    }
+
+
     public class SetCounselorsState
     {
+        public CounselorInfo Counselor { get; set; }
+
         public CounselorsState State { get; set; }
 
         public int[] Skills { get; set; }

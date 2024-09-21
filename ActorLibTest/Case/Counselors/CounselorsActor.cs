@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
-using NLog;
 
 
 namespace ActorLibTest.Case.Counselors
@@ -15,6 +14,13 @@ namespace ActorLibTest.Case.Counselors
         private int[] skills { get; set; } = new int[0];
 
         private int assignedTaskCount = 0;
+
+        private readonly CounselorInfo counselorInfo;
+
+        public CounselorsActor(CounselorInfo counselorInfo)
+        {
+            this.counselorInfo = counselorInfo;
+        }
 
         protected override void OnReceive(object message)
         {
@@ -59,7 +65,8 @@ namespace ActorLibTest.Case.Counselors
                 }
                 else
                 {
-                    Sender.Tell("I can't help you");
+                    //Sender.Tell("I can't help you");
+                    log.Warning($"{Self.Path} I can't help you");
                 }                
                 break;
 
@@ -95,7 +102,8 @@ namespace ActorLibTest.Case.Counselors
             switch (message)
             {
                 case CheckTakeTask checkTask:
-                Sender.Tell("I am Not Here..");
+                //Sender.Tell("I am Not Here..");
+                log.Warning($"{Self.Path} I am Not Here..");
                 break;
 
                 case SetCounselorsState counselor:

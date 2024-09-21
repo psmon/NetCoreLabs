@@ -17,7 +17,10 @@ namespace ActorLibTest.Case.Counselors
 
             Within(TimeSpan.FromMilliseconds(10000), () =>
             {
-                var counselorActor = actorSystem.ActorOf(Props.Create(() => new CounselorsActor()));
+                // 상담원 생성
+                var counselorActor = actorSystem.ActorOf(Props.Create(() => 
+                    new CounselorsActor(new CounselorInfo() { Id=1,Name="test1" }))
+                );
 
                 counselorActor.Tell(new SetCounselorsState() { State = CounselorsState.Online, Skills = new int[] { 1, 2, 3 } });
 
@@ -33,7 +36,7 @@ namespace ActorLibTest.Case.Counselors
 
                 counselorActor.Tell(new CheckTakeTask() { SkillType = 5 });
 
-                ExpectMsg("I can't help you");
+                ExpectNoMsg(TimeSpan.FromMilliseconds(500));
 
                 counselorActor.Tell(new SetCounselorsState() { State = CounselorsState.Offline, Skills = new int[] { 1, 2, 3 } });
 
@@ -41,7 +44,8 @@ namespace ActorLibTest.Case.Counselors
 
                 counselorActor.Tell(new CheckTakeTask() { SkillType = 1 });
 
-                ExpectMsg("I am Not Here..");
+                ExpectNoMsg(TimeSpan.FromMilliseconds(500));
+
             });
 
         }
