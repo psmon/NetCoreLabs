@@ -1,6 +1,8 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
+using Xunit.Abstractions;
+
 
 
 namespace ActorLibTest.Case.Counselors
@@ -8,6 +10,8 @@ namespace ActorLibTest.Case.Counselors
     public class CounselorsActor : UntypedActor
     {
         private ILoggingAdapter log = Context.GetLogger();
+
+        private ITestOutputHelper tlog;
 
         private CounselorsState counselorsState = CounselorsState.Offline;
 
@@ -17,9 +21,12 @@ namespace ActorLibTest.Case.Counselors
 
         private readonly CounselorInfo counselorInfo;
 
-        public CounselorsActor(CounselorInfo counselorInfo)
+        private Random Random = new Random();
+
+        public CounselorsActor(CounselorInfo counselorInfo, ITestOutputHelper testOutputHelper)
         {
             this.counselorInfo = counselorInfo;
+            tlog = testOutputHelper;
         }
 
         protected override void OnReceive(object message)
@@ -33,6 +40,9 @@ namespace ActorLibTest.Case.Counselors
                     counselorsState = counselor.State;
                     Sender.Tell("SetCounselorsState");
                     skills = counselor.Skills;
+
+                    // dummy
+                    assignedTaskCount = Random.Next(0, 10);
 
                     Become(Online);                                        
                 }
@@ -49,7 +59,7 @@ namespace ActorLibTest.Case.Counselors
                 break;
 
                 default:
-                    log.Warning($"received unhanddle message : {message}");
+                tlog.WriteLine($"received unhanddle message : {message}");
                 break;
             }
         }
@@ -61,12 +71,15 @@ namespace ActorLibTest.Case.Counselors
                 case CheckTakeTask checkTask:
                 if (skills.Contains(checkTask.SkillType))
                 {
-                    Sender.Tell("I can help you");
+                    Task.Delay(assignedTaskCount * 100);
+                    //Sender.Tell("I can help you");
+
+                    Sender.Tell(new WishTask() { WishActor = Self });
                 }
                 else
                 {
                     //Sender.Tell("I can't help you");
-                    log.Warning($"{Self.Path} I can't help you");
+                    tlog.WriteLine($"{Self.Path} I can't help you");
                 }                
                 break;
 
@@ -83,7 +96,7 @@ namespace ActorLibTest.Case.Counselors
                 case SetCounselorsState counselor:
                 if (counselor.State == CounselorsState.Offline)
                 {
-                    log.Info("counselors are offline");
+                    tlog.WriteLine("counselors are offline");
                     counselorsState = counselor.State;
                     skills = counselor.Skills;
                     Sender.Tell("SetCounselorsState");
@@ -92,7 +105,7 @@ namespace ActorLibTest.Case.Counselors
                 break;
 
                 default:
-                log.Warning($"received unhanddle message : {message}");
+                tlog.WriteLine($"received unhanddle message : {message}");
                 break;
             }
         }
@@ -103,13 +116,13 @@ namespace ActorLibTest.Case.Counselors
             {
                 case CheckTakeTask checkTask:
                 //Sender.Tell("I am Not Here..");
-                log.Warning($"{Self.Path} I am Not Here..");
+                tlog.WriteLine($"{Self.Path} I am Not Here..");
                 break;
 
                 case SetCounselorsState counselor:
                 if (counselor.State == CounselorsState.Online)
                 {
-                    log.Info("counselors are online");
+                    tlog.WriteLine("counselors are online");
                     counselorsState = counselor.State;
                     Sender.Tell("SetCounselorsState");
                     skills = counselor.Skills;
@@ -118,7 +131,7 @@ namespace ActorLibTest.Case.Counselors
                 break;
 
                 default:
-                log.Warning($"received unhanddle message : {message}");
+                tlog.WriteLine($"received unhanddle message : {message}");
                 break;
             }
         }

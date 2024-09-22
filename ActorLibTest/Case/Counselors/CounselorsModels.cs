@@ -1,4 +1,6 @@
-﻿namespace ActorLibTest.Case.Counselors
+﻿using Akka.Actor;
+
+namespace ActorLibTest.Case.Counselors
 {
     public class CounselorsModels
     {
@@ -45,6 +47,11 @@
     public class CheckTakeTask
     {
         public int SkillType { get; set; }
+    }
+
+    public class WishTask
+    {
+        public required IActorRef WishActor { get; set; }
     }
 
     public class AssignTask
