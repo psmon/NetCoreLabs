@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+	<AkkaVersion>1.5.40</AkkaVersion>	
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,12 +14,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
     <PackageReference Include="NBench" Version="2.0.1" />
-    <PackageReference Include="NLog" Version="5.3.3" />
+    <PackageReference Include="NLog" Version="5.4.0" />
     <PackageReference Include="Pro.NBench.xUnit" Version="2.0.0" />
     
 
 
-	<PackageReference Include="Akka.TestKit.Xunit2" Version="1.5.27.1" />
+	<PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

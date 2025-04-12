@@ -3,17 +3,19 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
+		<AkkaVersion>1.5.40</AkkaVersion>
+		<AkkaMinVersion>1.5.13</AkkaMinVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-		<PackageReference Include="Akka" Version="1.5.27.1" />
-		<PackageReference Include="Akka.Remote" Version="1.5.27.1" />
-		<PackageReference Include="Akka.Streams" Version="1.5.27.1" />
-		<PackageReference Include="Akka.DependencyInjection" Version="1.5.27.1" />
-		<PackageReference Include="Akka.Logger.NLog" Version="1.5.13" />
+		<PackageReference Include="Akka" Version="$(AkkaVersion)" />
+		<PackageReference Include="Akka.Remote" Version="$(AkkaVersion)" />
+		<PackageReference Include="Akka.Streams" Version="$(AkkaVersion)" />
+		<PackageReference Include="Akka.DependencyInjection" Version="$(AkkaVersion)" />
+		<PackageReference Include="Akka.Logger.NLog" Version="$(AkkaMinVersion)" />
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
-		<PackageReference Include="NLog" Version="5.3.3" />
+		<PackageReference Include="NLog" Version="5.4.0" />
 	</ItemGroup>
 
 </Project>
