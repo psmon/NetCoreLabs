@@ -16,6 +16,7 @@
 		<PackageReference Include="Akka.Logger.NLog" Version="$(AkkaMinVersion)" />
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
 		<PackageReference Include="NLog" Version="5.4.0" />
+		<PackageReference Include="RavenDB.Client" Version="7.0.1" />
 	</ItemGroup>
 
 </Project>
