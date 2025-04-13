@@ -1,5 +1,6 @@
 ﻿using ActorLib.Persistent.Model;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes.Vector;
 using Raven.Client.Documents.Linq;
 
 namespace ActorLib.Persistent;
@@ -66,18 +67,17 @@ public class TravelReviewRepository
         }
     }
     
-    public List<TravelReview> SearchReviewsByVector(float[] queryVector, int topN = 5)
+    public List<TravelReview> SearchReviewsByVector(float[] vector, int topN = 5)
     {
         using (var session = _store.OpenSession())
         {
-            var results = session.Advanced
-                .RawQuery<TravelReview>(
-                    @"from index 'TravelReview_Index'
-                      where TitleVector vector $queryVector
-                      order by score() desc
-                      limit $topN")
-                .AddParameter("queryVector", queryVector)
-                .AddParameter("topN", 10)
+            var results = session.Query<TravelReview>()
+                .VectorSearch(
+                    field => field.WithEmbedding(x => x.TagsEmbeddedAsSingle, VectorEmbeddingType.Single),
+                    queryVector => queryVector.ByEmbedding(new RavenVector<float>(vector)),
+                    0.85f,
+                    topN)
+                .Customize(x => x.WaitForNonStaleResults())
                 .ToList();
 
             return results;

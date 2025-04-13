@@ -1,6 +1,7 @@
 ﻿using ActorLib.Persistent;
 using ActorLib.Persistent.Model;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Queries.Vector;
 using Xunit.Abstractions;
 
 namespace ActorLibTest.Persistent;
@@ -20,7 +21,7 @@ public class TravelReviewRepositoryTests : TestKitXunit
         };
         _store.Initialize();
         
-        new TravelReview_Index().Execute(_store);
+        new TravelReviewIndex().Execute(_store);
 
         _repository = new TravelReviewRepository(_store);
 
@@ -40,12 +41,18 @@ public class TravelReviewRepositoryTests : TestKitXunit
                 var review = new TravelReview
                 {
                     Title = $"Review {i + 1}",
-                    TitleVector = new float[] { random.Next(0, 10), random.Next(0, 10), random.Next(0, 10) },
                     Content = $"This is a sample review content {i + 1}",
                     Category = categories[random.Next(categories.Length)],
                     Latitude = random.NextDouble() * 180 - 90, // -90 to 90
                     Longitude = random.NextDouble() * 360 - 180, // -180 to 180
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    TagsEmbeddedAsSingle = new RavenVector<float>(new float[] { random.Next(1, 10), random.Next(1, 10) }),
+                    TagsEmbeddedAsBase64 = new List<string> { "zczMPc3MTD6amZk+", "mpmZPs3MzD4AAAA/" },
+                    TagsEmbeddedAsInt8 = new sbyte[][]
+                    {
+                        VectorQuantizer.ToInt8(new float[] { 0.1f, 0.2f }),
+                        VectorQuantizer.ToInt8(new float[] { 0.3f, 0.4f })
+                    }
                 };
                 session.Store(review);
             }
@@ -54,12 +61,18 @@ public class TravelReviewRepositoryTests : TestKitXunit
             session.Store(new TravelReview
             {
                 Title = "Vector Test Review",
-                TitleVector = new float[] { 1.0f, 2.0f, 3.0f },
                 Content = "This is a vector test review",
                 Category = "Test",
                 Latitude = 37.7749,
                 Longitude = -122.4194,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                TagsEmbeddedAsSingle = new RavenVector<float>(new float[] { 6.6f, 7.7f }),
+                TagsEmbeddedAsBase64 = new List<string> { "zczMPc3MTD6amZk+", "mpmZPs3MzD4AAAA/" },
+                TagsEmbeddedAsInt8 = new sbyte[][]
+                {
+                    VectorQuantizer.ToInt8(new float[] { 0.1f, 0.2f }),
+                    VectorQuantizer.ToInt8(new float[] { 0.3f, 0.4f })
+                }
             });
             
             session.SaveChanges();
@@ -72,7 +85,6 @@ public class TravelReviewRepositoryTests : TestKitXunit
         var review = new TravelReview
         {
             Title = "New Review",
-            TitleVector = new float[] { 1.0f, 2.0f, 3.0f },
             Content = "This is a new review",
             Category = "Nature",
             Latitude = 37.7749,
@@ -129,7 +141,7 @@ public class TravelReviewRepositoryTests : TestKitXunit
     [Fact]
     public void TestSearchReviewsByVector()
     {
-        var queryVector = new float[] { 1.0f, 2.0f, 3.0f };
+        var queryVector = new float[] { 6.599999904632568f, 7.699999809265137f };
         var results = _repository.SearchReviewsByVector(queryVector, 5);
         Assert.NotEmpty(results);
         
@@ -138,6 +150,5 @@ public class TravelReviewRepositoryTests : TestKitXunit
         {
             output.WriteLine($"Title: {result.Title}, Latitude: {result.Latitude}, Longitude: {result.Longitude}");
         }
-        
     }
 }
