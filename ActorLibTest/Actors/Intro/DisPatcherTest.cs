@@ -21,7 +21,7 @@ public class DisPatcherTest : TestKitXunit
     [InlineData(3, "custom-dedicated-dispatcher")]        
     public void DispatcherTestAreOK(int nodeCount, string disPatcherName)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         TestProbe testProbe = this.CreateTestProbe(actorSystem);
 

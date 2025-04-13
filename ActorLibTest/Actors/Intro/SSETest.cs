@@ -19,7 +19,7 @@ public class SSETest : TestKitXunit
     [InlineData(10,3000)]
     public void SSEUserActorAreOK(int testCount, int cutoff, bool isPerformTest = false)
     {            
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         TestProbe testProbe = this.CreateTestProbe(actorSystem);
 

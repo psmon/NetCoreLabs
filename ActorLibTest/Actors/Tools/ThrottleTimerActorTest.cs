@@ -22,7 +22,7 @@ public class ThrottleTimerActorTest : TestKitXunit
     [InlineData(5, 1, false)]
     public void ThrottleTimerTest(int givenTestCount, int givenLimitSeconds, bool isPerformTest)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         int expectedCompletedMaxSecond = givenTestCount * givenLimitSeconds + 5;
 

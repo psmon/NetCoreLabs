@@ -19,7 +19,7 @@ public class RoutersTest : TestKitXunit
     [InlineData(3,1000)]
     public void RoundRobinPoolTest(int nodeCount, int testCount, bool isPerformTest = false)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         TestProbe testProbe = this.CreateTestProbe(actorSystem);
 
@@ -61,7 +61,7 @@ public class RoutersTest : TestKitXunit
     [InlineData(3, 1000)]
     public void RandomPoolTest(int nodeCount, int testCount, bool isPerformTest = false)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         TestProbe testProbe = this.CreateTestProbe(actorSystem);
 

@@ -16,7 +16,7 @@ public class MailBoxTest : TestKitXunit
     [InlineData(7, 3000)]
     public void HelloWorldAreOK(int testCount, int cutoff, bool isPerformTest = false)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         TestProbe testProbe = this.CreateTestProbe(actorSystem);
 

@@ -12,7 +12,7 @@ public class CounselorsActorTest : TestKitXunit
     [Fact(DisplayName = "CounselorsActorTestAreOK")]        
     public void CounselorsActorTestAreOK()
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         Within(TimeSpan.FromMilliseconds(10000), () =>
         {

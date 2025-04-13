@@ -12,7 +12,7 @@ public class SuperVisorActorTest : TestKitXunit
     [Fact(DisplayName = "SuperVisorActorTestAreOK")]
     public void SuperVisorActorTestAreOK()
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         Within(TimeSpan.FromMilliseconds(10000), () =>
         {

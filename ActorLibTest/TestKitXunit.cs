@@ -19,9 +19,9 @@ namespace ActorLibTest
 {
     public abstract class TestKitXunit : TestKit
     {
-        protected readonly AkkaService akkaService;
+        protected readonly AkkaService _akkaService;
 
-        protected IConfiguration configuration;
+        protected IConfiguration _configuration;
 
         protected readonly ITestOutputHelper output;
 
@@ -29,7 +29,7 @@ namespace ActorLibTest
 
         private readonly TextWriter _textWriter;
 
-        protected readonly ILoggingAdapter logger;
+        protected readonly ILoggingAdapter _logger;
 
         protected readonly Dictionary<int, int> _dictionary = new Dictionary<int, int>();
 
@@ -48,22 +48,16 @@ namespace ActorLibTest
             Console.SetOut(_textWriter);
 
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configuration = configurationBuilder.Build();
-            akkaService = new AkkaService();
-
-
+            _configuration = configurationBuilder.Build();
+            _akkaService = new AkkaService();
+            
             // Xunit+Nbench
             Trace.Listeners.Clear();
             Trace.Listeners.Add(new XunitTraceListener(output));
+            
+            _akkaService.SetDeafaultSystem(this.Sys);
 
-            // 실 사용서비스에서는 ActorSystem을 생성해야합니다.
-            // TestToolKit에서는 테스트검증을 위한 기본 ActorSystem이 생성되어
-            // 여기서는 생성된 ActorSystem을 이용합니다.           
-            // 시스템생성코드 : akkaService.CreateActorSystem("test");
-
-            akkaService.SetDeafaultSystem(this.Sys);
-
-            logger = this.Sys.Log;
+            _logger = this.Sys.Log;
 
         }
 
@@ -83,7 +77,6 @@ namespace ActorLibTest
                 }
 
                 # Dispatchers
-
                 custom-dispatcher {
                     type = Dispatcher
                     throughput = 100
@@ -113,6 +106,50 @@ namespace ActorLibTest
                   throughput = 100
                 }
 
+                akka.persistence {
+
+                  # Setup the RavenDB journal store:
+                  journal {
+                    plugin = ""akka.persistence.journal.ravendb""
+                    ravendb {
+                        class = ""Akka.Persistence.RavenDb.Journal.RavenDbJournal, Akka.Persistence.RavenDb""
+                        plugin-dispatcher = ""akka.actor.default-dispatcher""
+                        urls = [""http://localhost:9000""]
+                        name = ""net-core-labs""
+                        auto-initialize = false
+                        #certificate-path = ""\\path\\to\\cert.pfx""
+                        #save-changes-timeout = 30s
+                        #http-version = ""2.0""
+                        #disable-tcp-compression = false
+                    }
+                  }
+                   
+                  # Setup the RavenDB snapshot store:
+                  snapshot-store {
+                      plugin = ""akka.persistence.snapshot-store.ravendb""
+                      ravendb {
+                          class = ""Akka.Persistence.RavenDb.Snapshot.RavenDbSnapshotStore, Akka.Persistence.RavenDb""
+                          plugin-dispatcher = ""akka.actor.default-dispatcher""
+                          urls = [""http://localhost:9000""]
+                          name = ""net-core-labs""
+                          auto-initialize = false
+                          #certificate-path = ""\\path\\to\\cert.pfx""
+                          #save-changes-timeout = 30s
+                          #http-version = ""2.0""
+                          #disable-tcp-compression = false
+                      }
+                  }
+                  
+                  query {
+                    # Configure RavenDB as the underlying storage engine for querying:
+                    ravendb {
+                        class = ""Akka.Persistence.RavenDb.Query.RavenDbReadJournalProvider, Akka.Persistence.RavenDb""
+                        #refresh-interval = 3s
+                        #max-buffer-size = 65536
+                    }
+                  }
+                }
+
             ");
         }
 
@@ -131,8 +168,5 @@ namespace ActorLibTest
             _dictionary.Clear();
             _dataCache.Clear();
         }
-
-
-
     }
 }

@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
 		<AkkaVersion>1.5.40</AkkaVersion>
+		<AkkaPersistenceVersion>1.5.37</AkkaPersistenceVersion>
 		<AkkaMinVersion>1.5.13</AkkaMinVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -14,6 +15,8 @@
 		<PackageReference Include="Akka.Streams" Version="$(AkkaVersion)" />
 		<PackageReference Include="Akka.DependencyInjection" Version="$(AkkaVersion)" />
 		<PackageReference Include="Akka.Logger.NLog" Version="$(AkkaMinVersion)" />
+		<PackageReference Include="Akka.Persistence.RavenDB" Version="$(AkkaPersistenceVersion)" />
+		<PackageReference Include="Akka.Persistence.RavenDB.Hosting" Version="$(AkkaPersistenceVersion)" />
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
 		<PackageReference Include="NLog" Version="5.4.0" />
 		<PackageReference Include="RavenDB.Client" Version="7.0.1" />

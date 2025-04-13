@@ -18,7 +18,7 @@ public class AkkaServiceTest : TestKitXunit
     [InlineData(100)]
     public void CreateSystemAndMessageTestAreOK(int cutoff)
     {
-        var actorSystem = akkaService.GetActorSystem();
+        var actorSystem = _akkaService.GetActorSystem();
 
         var basicActor = actorSystem.ActorOf(Props.Create(() => new BasicActor()));
 
