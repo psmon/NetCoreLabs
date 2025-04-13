@@ -125,11 +125,9 @@ services:
 
 
 ```
-### Secutity Test
+## Playground by Blazor
 ![dispacher](Doc/router-roundrobin.png)
 
-
-### Demo
 - [NetCoreLabs PlayGound](https://code.webnori.com/)
 
 
