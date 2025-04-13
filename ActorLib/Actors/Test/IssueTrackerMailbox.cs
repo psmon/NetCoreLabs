@@ -1,53 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Configuration;
 using Akka.Dispatch;
 
-namespace ActorLib.Actors.Test
+namespace ActorLib.Actors.Test;
+
+public class IssueTrackerMailbox : UnboundedPriorityMailbox
 {
-    public class IssueTrackerMailbox : UnboundedPriorityMailbox
-    {
-        public IssueTrackerMailbox(Settings settings, Config config) : base(settings, config)
-        {            
-        }
+    public IssueTrackerMailbox(Settings settings, Config config) : base(settings, config)
+    {            
+    }
 
-        protected override int PriorityGenerator(object message)
+    protected override int PriorityGenerator(object message)
+    {
+        var issue = message as Issue;
+
+        if (issue != null)
         {
-            var issue = message as Issue;
+            if (issue.IsSecurityFlaw)
+                return 0;
 
-            if (issue != null)
-            {
-                if (issue.IsSecurityFlaw)
-                    return 0;
-
-                if (issue.IsBug)
-                    return 1;
-            }
-
-            return 2;
+            if (issue.IsBug)
+                return 1;
         }
+
+        return 2;
     }
+}
 
-    public class Issue : IJsonSerializable
-    {
-        public bool IsSecurityFlaw { get; set; }
+public class Issue : IJsonSerializable
+{
+    public bool IsSecurityFlaw { get; set; }
 
-        public bool IsBug { get; set; }
+    public bool IsBug { get; set; }
 
-    }
+}
 
-    public class ExpectIssue
-    {
-    }
+public class ExpectIssue
+{
+}
 
-    public class NoIssue
-    {
-    }
-
+public class NoIssue
+{
 }

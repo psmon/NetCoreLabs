@@ -35,4 +35,8 @@
     <ProjectReference Include="..\BlazorActorApp\BlazorActorApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Actors\" />
+  </ItemGroup>
+
 </Project>

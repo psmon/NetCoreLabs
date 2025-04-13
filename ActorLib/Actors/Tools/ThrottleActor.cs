@@ -4,82 +4,81 @@ using Akka.Event;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 
-namespace ActorLib.Actors.Tools
+namespace ActorLib.Actors.Tools;
+
+// Stream Base Throttle
+public class ThrottleActor : ReceiveActor
 {
-    // Stream Base Throttle
-    public class ThrottleActor : ReceiveActor
+    private readonly ILoggingAdapter logger = Context.GetLogger();
+
+    private IActorRef? consumer;
+
+    private IActorRef _throttler;
+
+    private readonly IMaterializer _materializer;
+
+    private int _processCouuntPerSec;
+
+    public ThrottleActor(int processCouuntPerSec)
     {
-        private readonly ILoggingAdapter logger = Context.GetLogger();
+        _materializer = Context.Materializer();
 
-        private IActorRef? consumer;
+        _processCouuntPerSec = processCouuntPerSec;
 
-        private IActorRef _throttler;
+        _throttler =
+            Source.ActorRef<object>(1000, OverflowStrategy.DropNew)
+                  .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
+                  .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
+                  .Run(_materializer);
 
-        private readonly IMaterializer _materializer;
-
-        private int _processCouuntPerSec;
-
-        public ThrottleActor(int processCouuntPerSec)
+        Receive<SetTarget>(target =>
         {
-            _materializer = Context.Materializer();
+            consumer = target.Ref;
+        });
 
-            _processCouuntPerSec = processCouuntPerSec;
+
+        Receive<TPSInfoReq>(target =>
+        {
+            Sender.Tell(_processCouuntPerSec);
+        });
+
+        Receive<ChangeTPS>(msg =>
+        {
+            var oldThrottler = _throttler;
+
+            logger.Info($"Tps Changed {_processCouuntPerSec} -> {msg.processCouuntPerSec}");
+
+            _processCouuntPerSec = msg.processCouuntPerSec;
 
             _throttler =
                 Source.ActorRef<object>(1000, OverflowStrategy.DropNew)
-                      .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
-                      .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
-                      .Run(_materializer);
+                        .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
+                        .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
+                        .Run(_materializer);
 
-            Receive<SetTarget>(target =>
+            //oldThrottler.Tell(PoisonPill.Instance);
+
+        });
+
+
+        Receive<TodoQueue>(msg =>
+        {
+            _throttler.Tell(new Todo()
             {
-                consumer = target.Ref;
+                Id = msg.Todo.Id,
+                Title = msg.Todo.Title
             });
+        });
 
+        Receive<Todo>(msg =>
+        {
+            logger.Info($"{msg.Id} - {msg.Title}");
+            // TODO Something
 
-            Receive<TPSInfoReq>(target =>
+            if (consumer != null)
             {
-                Sender.Tell(_processCouuntPerSec);
-            });
-
-            Receive<ChangeTPS>(msg =>
-            {
-                var oldThrottler = _throttler;
-
-                logger.Info($"Tps Changed {_processCouuntPerSec} -> {msg.processCouuntPerSec}");
-
-                _processCouuntPerSec = msg.processCouuntPerSec;
-
-                _throttler =
-                    Source.ActorRef<object>(1000, OverflowStrategy.DropNew)
-                            .Throttle(_processCouuntPerSec, TimeSpan.FromSeconds(1), _processCouuntPerSec, ThrottleMode.Shaping)
-                            .To(Sink.ActorRef<object>(Self, NotUsed.Instance))
-                            .Run(_materializer);
-
-                //oldThrottler.Tell(PoisonPill.Instance);
-
-            });
-
-
-            Receive<TodoQueue>(msg =>
-            {
-                _throttler.Tell(new Todo()
-                {
-                    Id = msg.Todo.Id,
-                    Title = msg.Todo.Title
-                });
-            });
-
-            Receive<Todo>(msg =>
-            {
-                logger.Info($"{msg.Id} - {msg.Title}");
-                // TODO Something
-
-                if (consumer != null)
-                {
-                    consumer.Tell(msg);
-                }
-            });
-        }
+                consumer.Tell(msg);
+            }
+        });
     }
 }

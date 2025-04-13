@@ -1,58 +1,57 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
-namespace ActorLib.Actors.Tools
+namespace ActorLib.Actors.Tools;
+
+// Timer Base Throttle
+public class ThrottleTimerActor : ReceiveActor
 {
-    // Timer Base Throttle
-    public class ThrottleTimerActor : ReceiveActor
+    private readonly ILoggingAdapter logger = Context.GetLogger();
+
+    private IActorRef? consumer;
+
+    private Queue<object> eventQueue = new Queue<object>();
+
+    private DateTime lastExecuteDt;
+
+
+    public ThrottleTimerActor(int element, int second, int maxBust)
     {
-        private readonly ILoggingAdapter logger = Context.GetLogger();
+        lastExecuteDt = DateTime.Now;
 
-        private IActorRef? consumer;
-
-        private Queue<object> eventQueue = new Queue<object>();
-
-        private DateTime lastExecuteDt;
-
-
-        public ThrottleTimerActor(int element, int second, int maxBust)
-        {
-            lastExecuteDt = DateTime.Now;
-
-            Context.System
-               .Scheduler
-               .ScheduleTellRepeatedly(TimeSpan.FromSeconds(0),
-                         TimeSpan.FromSeconds(1),
-                         Self, new Flush(), ActorRefs.NoSender);
+        Context.System
+            .Scheduler
+            .ScheduleTellRepeatedly(TimeSpan.FromSeconds(0),
+                TimeSpan.FromSeconds(1),
+                Self, new Flush(), ActorRefs.NoSender);
 
 #pragma warning disable CS1998
-            Receive<SetTarget>(target =>
-            {
-                consumer = target.Ref;
-            });
+        Receive<SetTarget>(target =>
+        {
+            consumer = target.Ref;
+        });
 
-            Receive<EventCmd>(message =>
+        Receive<EventCmd>(message =>
+        {
+            if (eventQueue.Count > maxBust)
             {
-                if (eventQueue.Count > maxBust)
-                {
-                    logger.Warning($"ThrottleActor MaxBust : {eventQueue.Count}/{maxBust}");
-                }
+                logger.Warning($"ThrottleActor MaxBust : {eventQueue.Count}/{maxBust}");
+            }
                 
-                eventQueue.Enqueue(message);
+            eventQueue.Enqueue(message);
 
-            });
+        });
 
-            Receive<Flush>(message =>
+        Receive<Flush>(message =>
+        {
+            if (eventQueue.Count > 0)
             {
-                if (eventQueue.Count > 0)
-                {
-                    var eventData = eventQueue.Dequeue();
+                var eventData = eventQueue.Dequeue();
 
-                    if (consumer != null)
-                        consumer.Tell(eventData);
-                    lastExecuteDt = DateTime.Now;
-                }
-            });
-        }
+                if (consumer != null)
+                    consumer.Tell(eventData);
+                lastExecuteDt = DateTime.Now;
+            }
+        });
     }
 }

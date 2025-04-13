@@ -1,35 +1,34 @@
-﻿namespace ActorLib.Actors.Test
+﻿
+namespace ActorLib.Actors.Test;
+
+public class DelayCommand
 {
-    public class DelayCommand
+    public int Delay { get; set; }
+
+    public string Message { get; set; }
+    public DelayCommand(string message, int delay) 
     {
-        public int Delay { get; set; }
-
-        public string Message { get; set; }
-        public DelayCommand(string message, int delay) 
-        {
-            Delay = delay;
-            Message = message;
-        }
+        Delay = delay;
+        Message = message;
     }
+}
 
-    public class MessageCommand
+public class MessageCommand
+{
+    public string Message { get; set; }
+
+    public MessageCommand(string message) 
+    { 
+        Message = message;
+    }
+}
+
+public class RemoteCommand
+{
+    public string Message { get; set; }
+
+    public RemoteCommand(string message)
     {
-        public string Message { get; set; }
-
-        public MessageCommand(string message) 
-        { 
-            Message = message;
-        }
+        Message = message;
     }
-
-    public class RemoteCommand
-    {
-        public string Message { get; set; }
-
-        public RemoteCommand(string message)
-        {
-            Message = message;
-        }
-    }
-
 }
