@@ -1,5 +1,5 @@
-﻿using ActorLib.Actors.Test;
-using ActorLib.Actors.Tools;
+﻿using ActorLib.Actors.Tools.Throttle;
+using ActorLib.Throttle.Actors.Test;
 
 using Akka.Actor;
 using Akka.Event;

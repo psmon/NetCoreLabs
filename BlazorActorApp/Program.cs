@@ -1,8 +1,8 @@
 using System.Reflection;
 
 using ActorLib;
-using ActorLib.Actors.Test;
-using ActorLib.Actors.Tools;
+using ActorLib.Throttle.Actors.Test;
+using ActorLib.Actors.Tools.Throttle;
 
 using Akka.Actor;
 using Akka.Routing;

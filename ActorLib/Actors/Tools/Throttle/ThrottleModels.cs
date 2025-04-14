@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 
-namespace ActorLib.Actors.Tools;
+namespace ActorLib.Actors.Tools.Throttle;
 
 public class SetTarget
 {

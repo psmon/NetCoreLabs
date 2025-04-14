@@ -4,7 +4,7 @@ using Akka.Event;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 
-namespace ActorLib.Actors.Tools;
+namespace ActorLib.Actors.Tools.Throttle;
 
 // Stream Base Throttle
 public class ThrottleActor : ReceiveActor

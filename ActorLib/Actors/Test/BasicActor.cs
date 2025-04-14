@@ -1,8 +1,8 @@
-﻿using ActorLib.Actors.Tools;
+﻿using ActorLib.Actors.Tools.Throttle;
 using Akka.Actor;
 using Akka.Event;
 
-namespace ActorLib.Actors.Test;
+namespace ActorLib.Throttle.Actors.Test;
 
 public class BasicActor : ReceiveActor
 {

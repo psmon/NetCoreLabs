@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using ActorLib.Actors.Test;
+using ActorLib.Throttle.Actors.Test;
 using Akka.Actor;
 using Akka.TestKit;
 using Xunit.Abstractions;

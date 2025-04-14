@@ -1,5 +1,5 @@
 ﻿
-namespace ActorLib.Actors.Test;
+namespace ActorLib.Throttle.Actors.Test;
 
 public class DelayCommand
 {

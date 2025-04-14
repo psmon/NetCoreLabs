@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ActorLib.Actors
+namespace ActorLib.Throttle.Actors
 {
     public interface IJsonSerializable
     {
