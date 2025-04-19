@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "McpServer": {
+      "commandName": "Project",
+      "commandLineArgs": "--serverMode"
+    }
+  }
+}
