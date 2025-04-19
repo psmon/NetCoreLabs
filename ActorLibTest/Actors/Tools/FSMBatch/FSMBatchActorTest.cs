@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using ActorLib.Actors.Tools.FSMBatch;
+using ActorLib.Actor.Tools.FSMBatch;
 using Akka.Actor;
 using FluentAssertions;
 using Xunit.Abstractions;

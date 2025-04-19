@@ -2,7 +2,7 @@
 using Akka.Actor;
 using Akka.Event;
 
-namespace ActorLib.Actors.Tools.FSMBatch;
+namespace ActorLib.Actor.Tools.FSMBatch;
 
 public class FSMBatchActor : FSM<State, IData>
 {

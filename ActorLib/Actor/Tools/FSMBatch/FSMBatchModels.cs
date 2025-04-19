@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Akka.Actor;
 
-namespace ActorLib.Actors.Tools.FSMBatch;
+namespace ActorLib.Actor.Tools.FSMBatch;
 
 // received events
 public class SetTarget

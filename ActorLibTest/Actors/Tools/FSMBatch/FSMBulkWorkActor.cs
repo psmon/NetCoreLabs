@@ -1,4 +1,4 @@
-﻿using ActorLib.Actors.Tools.FSMBatch;
+﻿using ActorLib.Actor.Tools.FSMBatch;
 using ActorLib.Persistent;
 using Akka.Actor;
 using Raven.Client.Documents;

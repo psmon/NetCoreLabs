@@ -73,7 +73,7 @@ namespace ActorLibTest
 
                 # MailBox
                 my-custom-mailbox {
-                    mailbox-type : ""ActorLib.Actors.Test.IssueTrackerMailbox, ActorLib""
+                    mailbox-type : ""ActorLib.Actor.Test.IssueTrackerMailbox, ActorLib""
                 }
 
                 # Dispatchers

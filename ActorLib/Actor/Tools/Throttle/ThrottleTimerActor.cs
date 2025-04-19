@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
-namespace ActorLib.Actors.Tools.Throttle;
+namespace ActorLib.Actor.Tools.Throttle;
 
 // Timer Base Throttle
 public class ThrottleTimerActor : ReceiveActor

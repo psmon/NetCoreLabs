@@ -2,7 +2,7 @@
 using Akka.Configuration;
 using Akka.Dispatch;
 
-namespace ActorLib.Throttle.Actors.Test;
+namespace ActorLib.Actor.Test;
 
 public class IssueTrackerMailbox : UnboundedPriorityMailbox
 {

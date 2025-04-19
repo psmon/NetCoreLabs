@@ -1,4 +1,4 @@
-﻿using ActorLib.Throttle.Actors.Test;
+﻿using ActorLib.Actor.Test;
 using Akka.Actor;
 using NBench;
 using Pro.NBench.xUnit.XunitExtensions;

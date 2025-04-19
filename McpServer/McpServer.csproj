@@ -16,4 +16,8 @@
       <ProjectReference Include="..\ActorLib\ActorLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistent\" />
+    </ItemGroup>
+
 </Project>
