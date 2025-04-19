@@ -39,7 +39,7 @@ public class ActorService
 
         if (serverMode)
         {
-            // 서버 모드일 때만 특정 액터를 초기화
+            // 서버 모드일 때만 작동액터 생성 : MCP Server 
             SearchActor = actorSystem.ActorOf<SearchActor>("search-actor");
             RecordActor = actorSystem.ActorOf<RecordActor>("record-actor");
             HistoryActor = actorSystem.ActorOf<HistoryActor>("history-actor");
@@ -56,7 +56,7 @@ public class ActorService
         }
         else
         {
-            // 클라이언트 모드일 때 원격 액터 참조
+            // 클라이언트 모드일 때 원격 액터 참조 : MCP Client
             var remoteAddress = "akka.tcp://MyActorSystem@127.0.0.1:5500";
             SearchActor = actorSystem.ActorSelection($"{remoteAddress}/user/search-actor")
                 .ResolveOne(TimeSpan.FromSeconds(3)).Result;

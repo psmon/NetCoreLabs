@@ -16,8 +16,6 @@ builder.Services
     .WithStdioServerTransport()
     .WithToolsFromAssembly();
 
-//var serverMode = args.Contains("--serverMode"); // 실행 인자에서 serverMode 설정
-
 var clientMode = args.Contains("--clientMode"); // 실행 인자에서 clientMode 설정
 
 builder.Services.AddSingleton<ActorService>(provider => new ActorService(!clientMode));
