@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
 		<AkkaVersion>1.5.40</AkkaVersion>
 		<AkkaPersistenceVersion>1.5.37</AkkaPersistenceVersion>
@@ -18,8 +18,13 @@
 		<PackageReference Include="Akka.Persistence.RavenDB" Version="$(AkkaPersistenceVersion)" />
 		<PackageReference Include="Akka.Persistence.RavenDB.Hosting" Version="$(AkkaPersistenceVersion)" />
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
+		<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.9" />
 		<PackageReference Include="NLog" Version="5.4.0" />
 		<PackageReference Include="RavenDB.Client" Version="7.0.1" />
 	</ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="MCP\" />
+    </ItemGroup>
 
 </Project>

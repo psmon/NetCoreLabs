@@ -1,0 +1,14 @@
+﻿{
+  "inputs": [],
+  "servers": {
+    "McpServer": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "D:\\Code\\Webnori\\NetCoreLabs\\McpServer\\McpServer.csproj"
+      ]
+    }
+  }
+}

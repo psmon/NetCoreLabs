@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루�
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpServer", "McpServer\McpServer.csproj", "{434D5A36-905C-4E8B-84EC-B6F382A81E56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{97083482-80D5-4132-8C3B-03BFE1BE297A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97083482-80D5-4132-8C3B-03BFE1BE297A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97083482-80D5-4132-8C3B-03BFE1BE297A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{434D5A36-905C-4E8B-84EC-B6F382A81E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{434D5A36-905C-4E8B-84EC-B6F382A81E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{434D5A36-905C-4E8B-84EC-B6F382A81E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{434D5A36-905C-4E8B-84EC-B6F382A81E56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
