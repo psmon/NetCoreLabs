@@ -1,0 +1,170 @@
+﻿{
+  "Scenario": "Forecasting",
+  "DataSource": {
+    "Version": 3,
+    "EscapeCharacter": "\"",
+    "ReadMultiLines": false,
+    "KeepDiacritics": false,
+    "KeepPunctuations": false,
+    "AllowQuoting": false,
+    "Type": "TabularFile",
+    "FilePath": "D:\\BI\\가격예측\\전체월별매출.CSV",
+    "Delimiter": ",",
+    "DecimalMarker": ".",
+    "HasHeader": true,
+    "ColumnProperties": [
+      {
+        "ColumnName": "Date",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Price",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      }
+    ]
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 13626.667831355951,
+        "RuntimeInSeconds": 0.056,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 10,
+            "TrainSize": 17,
+            "Horizon": 20,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 13626.667831355951,
+        "RuntimeInSeconds": 0.002,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 2712,
+            "TrainSize": 17,
+            "Horizon": 20,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 13626.667831355951,
+        "RuntimeInSeconds": 0.003,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 978,
+            "TrainSize": 17,
+            "Horizon": 20,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 13626.667831355951,
+        "RuntimeInSeconds": 0.002,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 437,
+            "TrainSize": 17,
+            "Horizon": 20,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 13626.667831355951,
+        "RuntimeInSeconds": 0.002,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 31,
+            "TrainSize": 17,
+            "Horizon": 20,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "ForecastBySsa"
+    },
+    "Schema": "e0",
+    "MetricName": "RMSE",
+    "ModelFilePath": "D:\\Code\\Webnori\\NetCoreLabs\\ActorLib\\MLPricePredictionModel.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 5,
+  "TrainingOption": {
+    "Version": 3,
+    "OptimizeMetric": "RMSE",
+    "Subsampling": false,
+    "Tuner": "eci-cfo",
+    "Type": "ForecastingTrainingOption",
+    "TrainingTime": 10,
+    "UseCrossValidation": false,
+    "Horizon": 20,
+    "TimeColumn": "Date",
+    "LabelColumn": "Price",
+    "UseDefaultIndex": false,
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "CrossValidationValidationOption",
+      "NumberOfFolds": 5
+    }
+  }
+}
